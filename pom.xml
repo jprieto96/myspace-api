@@ -16,6 +16,22 @@
 	<properties>
 		<java.version>1.8</java.version>
 	</properties>
+	<profiles>
+		<profile>
+			<id>local</id>
+			<properties>
+				<packaging.type>jar</packaging.type>
+				<spring.profiles.active>local</spring.profiles.active>
+			</properties>
+		</profile>
+		<profile>
+			<id>prod</id>
+			<properties>
+				<packaging.type>jar</packaging.type>
+				<spring.profiles.active>prod</spring.profiles.active>
+			</properties>
+		</profile>
+	</profiles>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -64,6 +80,11 @@
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-test</artifactId>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt</artifactId>
+			<version>0.9.1</version>
 		</dependency>
 	</dependencies>
 
