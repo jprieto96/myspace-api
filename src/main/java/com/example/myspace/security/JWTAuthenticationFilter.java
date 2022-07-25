@@ -1,6 +1,6 @@
 package com.example.myspace.security;
 
-import com.example.myspace.constant.Constants;
+import com.example.myspace.util.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;

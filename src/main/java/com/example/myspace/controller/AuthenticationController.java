@@ -1,11 +1,9 @@
 package com.example.myspace.controller;
 
-import com.example.myspace.config.AuthenticationCurrentUserService;
-import com.example.myspace.constant.Constants;
+import com.example.myspace.util.Constants;
 import com.example.myspace.dto.AuthenticationDto;
 import com.example.myspace.model.ClientGroupModel;
 import com.example.myspace.security.UserPrinciple;
-import com.example.myspace.service.ClientService;
 import com.example.myspace.util.TokenResultUtil;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -21,7 +19,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Base64;
 import java.util.Date;
 
 @RestController
@@ -30,23 +27,13 @@ public class AuthenticationController {
     @Autowired
     private AuthenticationManager authenticationManager;
 
-    @Autowired
-    private ClientService clientService;
-
-    @Autowired
-    private AuthenticationCurrentUserService authenticationCurrentUserService;
-
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AuthenticationDto authenticationDto) throws AuthenticationException {
-
-        // Decode the password
-        String password = new String(Base64.getDecoder().decode(authenticationDto.getPassword()));
-
         // Authentication is realized with the username and password
         final Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         authenticationDto.getEmail(),
-                        password
+                        authenticationDto.getPassword()
                 )
         );
         // The authentication object is saved in the context

@@ -1,4 +1,4 @@
-package com.example.myspace.constant;
+package com.example.myspace.util;
 
 public class Constants {
 
@@ -16,6 +16,9 @@ public class Constants {
 
     // URL for login
     public static final String LOGIN_URL = "/login";
+
+    // URL for register in the app
+    public static final String REGISTER_URL = "/register";
 
     // Constant used for adding the userGroup to the token
     public static final String AUTHORITIES_USER_GROUP = "userGroup";

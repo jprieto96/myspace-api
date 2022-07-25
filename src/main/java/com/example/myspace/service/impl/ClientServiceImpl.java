@@ -1,18 +1,21 @@
 package com.example.myspace.service.impl;
 
-import com.example.myspace.dao.ClientDao;
+import com.example.myspace.exceptions.client.*;
+import com.example.myspace.repository.ClientRepository;
 import com.example.myspace.dto.ClientDto;
 import com.example.myspace.model.ClientModel;
 import com.example.myspace.security.UserPrinciple;
 import com.example.myspace.service.ClientService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.Base64;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -21,69 +24,79 @@ import java.util.regex.Pattern;
 @Transactional
 public class ClientServiceImpl implements UserDetailsService, ClientService {
 
+    private static final Logger LOGGER = LogManager.getLogger(ClientServiceImpl.class);
+
     @Autowired
-    private ClientDao clientDao;
+    private ClientRepository clientRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
-    public Optional<ClientDto> create(ClientDto clientDto) throws Exception {
-        Optional<ClientModel> auxClient = clientDao.findByEmail(clientDto.getEmail());
+    public Optional<ClientDto> create(ClientDto clientDto) throws ValidationException {
+        Optional<ClientModel> auxClient = clientRepository.findByEmail(clientDto.getEmail());
 
         ValidationException e = null;
-        if(tClient.getUsername().equals("")) {
-            e = new InvalidEmptyNameException();
+        if(clientDto.getUsername().equals("")) {
+            e = new EmptyNameException();
         } else if (auxClient.isPresent() && auxClient.get().isActive()) {
-            e = new InvalidDniExistsException();
-        } else if (!validatePassword(tClient.getPassword())) {
-            e = new InvalidPasswordFormatException();
+            e = new ClientExistsException();
+        } else if (!isPasswordValid(clientDto)) {
+            e = new PasswordFormatException();
+        } else if (!isEmailValid(clientDto.getEmail())) {
+            e = new EmailFormatException();
         }
 
         if (Optional.ofNullable(e).isPresent()) {
-            log.warn("User creation has not passed validation rules: {}",
+            LOGGER.error("Client creation has not passed validation rules: {}",
                     e.getMessage());
             throw e;
         }
 
-        log.debug("User: {} has passed validation rules", tClient.getUsername());
+        LOGGER.debug("Client: {} has passed validation rules", clientDto.getUsername());
 
-        Client client;
-
+        ClientModel client = null;
         if(auxClient.isPresent()) {
             client = auxClient.get();
             client.setActive(true);
-            client.setDni(tClient.getDni());
-            client.setPassword(tClient.getPassword());
-            client.setUsername(tClient.getUsername());
+            client.setName(clientDto.getName());
+            client.setPassword(passwordEncoder.encode(clientDto.getPassword()));
+            client.setUsername(clientDto.getUsername());
         } else {
-            tClient.setActive(true);
-            client = new Client(tClient);
+            clientDto.setActive(true);
+            clientDto.setPassword(passwordEncoder.encode(clientDto.getPassword()));
+            client = new ClientModel(clientDto);
         }
 
-        Client clientSaved = repositoryClient.save(client);
+        ClientModel clientSaved = clientRepository.save(client);
 
-        return clientSaved.toTransfer();
+        return Optional.ofNullable(clientSaved.toDto());
+    }
+
+    private boolean isEmailValid(String email) {
+        String pattern = "^[\\p{L}0-9!#$%&'*+\\/=?^_`{|}~-][\\p{L}0-9.!#$%&'*+\\/=?^_`{|}~-]{0,63}@[\\p{L}0-9-]+(?:\\.[\\p{L}0-9-]{2,7})*$";
+        return Pattern.matches(pattern, email);
     }
 
     @Override
     public Optional<ClientModel> findByEmail(String email) {
-        return clientDao.findByEmail(email);
+        return clientRepository.findByEmail(email);
     }
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Optional<ClientModel> optionalClientModel = clientDao.findByEmail(email);
+        Optional<ClientModel> optionalClientModel = clientRepository.findByEmail(email);
         if(!optionalClientModel.isPresent()) throw new UsernameNotFoundException("Invalid email or password.");
 
         return UserPrinciple.build(optionalClientModel.get());
     }
 
-    public boolean validatePassword(String password) {
-        if(password.isEmpty()) {
+    public boolean isPasswordValid(ClientDto clientDto) {
+        if(clientDto.getPassword().isEmpty()) {
             return false;
         }
 
-        byte[] decodedBytes = Base64.getDecoder().decode(password);
-        String decodedString = new String(decodedBytes);
-        String decryptedPassword = decodedString.substring(0, decodedString.length() - 9);
+        String decryptedPassword = clientDto.getPasswordWithoutSalt();
         if (decryptedPassword.length() < 8) {
             return false;
         }

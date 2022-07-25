@@ -1,5 +1,6 @@
 package com.example.myspace.model;
 
+import com.example.myspace.dto.ClientDto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,6 +23,9 @@ public class ClientModel implements Serializable {
     @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false)
+    private String username;
+
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(nullable = false)
     private String password;
@@ -36,11 +40,17 @@ public class ClientModel implements Serializable {
     @ManyToOne(fetch = FetchType.EAGER)
     private ClientGroupModel clientGroup;
 
-    public ClientModel(Long id, String name, String password, String email, boolean active) {
-        this.id = id;
-        this.name = name;
-        this.password = password;
-        this.email = email;
-        this.active = active;
+    public ClientModel(ClientDto clientDto) {
+        this.id = clientDto.getId();
+        this.name = clientDto.getName();
+        this.username = clientDto.getUsername();
+        this.password = clientDto.getPassword();
+        this.email = clientDto.getEmail();
+        this.active = clientDto.isActive();
     }
+
+    public ClientDto toDto() {
+        return new ClientDto();
+    }
+
 }

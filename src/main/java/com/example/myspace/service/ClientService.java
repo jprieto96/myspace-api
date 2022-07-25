@@ -1,12 +1,14 @@
 package com.example.myspace.service;
 
 import com.example.myspace.dto.ClientDto;
+import com.example.myspace.exceptions.client.ValidationException;
+import com.example.myspace.model.ClientModel;
 
 import java.util.Optional;
 
 public interface ClientService {
 
-    Optional<ClientDto> create(ClientDto clientDto) throws Exception;
-    Optional<ClientDto> findByEmail(String email);
+    Optional<ClientDto> create(ClientDto clientDto) throws ValidationException;
+    Optional<ClientModel> findByEmail(String email);
 
 }

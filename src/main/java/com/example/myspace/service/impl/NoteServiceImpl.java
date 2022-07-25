@@ -1,6 +1,6 @@
 package com.example.myspace.service.impl;
 
-import com.example.myspace.dao.NoteDao;
+import com.example.myspace.repository.NoteRepository;
 import com.example.myspace.dto.NoteDto;
 import com.example.myspace.service.NoteService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +14,7 @@ import java.util.List;
 public class NoteServiceImpl implements NoteService {
 
     @Autowired
-    private NoteDao noteDao;
+    private NoteRepository noteRepository;
 
     @Override
     public NoteDto createNote(NoteDto noteDto) throws Exception {

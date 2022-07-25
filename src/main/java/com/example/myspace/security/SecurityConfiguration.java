@@ -1,6 +1,6 @@
 package com.example.myspace.security;
 
-import com.example.myspace.constant.Constants;
+import com.example.myspace.util.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,6 +31,7 @@ public class SecurityConfiguration {
             .cors().and()
             .csrf().disable()
             .authorizeRequests().antMatchers(HttpMethod.POST, Constants.LOGIN_URL).permitAll()
+            .antMatchers(HttpMethod.POST, Constants.REGISTER_URL).permitAll()
             .anyRequest().authenticated().and()
             .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
             .addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class);
