@@ -29,11 +29,14 @@ public class AuthenticationController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AuthenticationDto authenticationDto) throws AuthenticationException {
+        // Decrypt password
+        String password = authenticationDto.getPasswordWithoutSalt();
+
         // Authentication is realized with the username and password
         final Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        authenticationDto.getEmail(),
-                        authenticationDto.getPassword()
+                        authenticationDto.getUsername(),
+                        password
                 )
         );
         // The authentication object is saved in the context

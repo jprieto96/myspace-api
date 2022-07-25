@@ -23,10 +23,9 @@ public class ClientModel implements Serializable {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String username;
 
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(nullable = false)
     private String password;
 
@@ -50,7 +49,7 @@ public class ClientModel implements Serializable {
     }
 
     public ClientDto toDto() {
-        return new ClientDto();
+        return new ClientDto(this);
     }
 
 }

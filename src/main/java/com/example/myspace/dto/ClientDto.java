@@ -1,6 +1,7 @@
 package com.example.myspace.dto;
 
 import com.example.myspace.model.ClientModel;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import java.util.Base64;
@@ -39,10 +40,10 @@ public class ClientDto {
         return new ClientModel(this);
     }
 
+    @JsonIgnore
     public String getPasswordWithoutSalt() {
         byte[] decodedBytes = Base64.getDecoder().decode(password);
         String decodedString = new String(decodedBytes);
         return decodedString.substring(0, decodedString.length() - 6);
     }
-
 }

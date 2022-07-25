@@ -12,10 +12,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Base64;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -30,18 +31,23 @@ public class ClientServiceImpl implements UserDetailsService, ClientService {
     private ClientRepository clientRepository;
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Override
-    public Optional<ClientDto> create(ClientDto clientDto) throws ValidationException {
-        Optional<ClientModel> auxClient = clientRepository.findByEmail(clientDto.getEmail());
+    public Optional<ClientDto> create(ClientDto clientDto) throws ClientException {
+        Optional<ClientModel> auxClientByEmail = clientRepository.findByEmail(clientDto.getEmail());
+        Optional<ClientModel> auxClientByUsername = clientRepository.findByUsername(clientDto.getUsername());
 
-        ValidationException e = null;
-        if(clientDto.getUsername().equals("")) {
+        ClientException e = null;
+        if (clientDto == null) {
+            e = new ClientNotFoundException();
+        } else if(clientDto.getUsername() == null || clientDto.getUsername().equals("")) {
+            e = new EmptyUserNameException();
+        } else if (clientDto.getName() == null || clientDto.getName().equals("")) {
             e = new EmptyNameException();
-        } else if (auxClient.isPresent() && auxClient.get().isActive()) {
+        } else if ((auxClientByEmail.isPresent() && auxClientByEmail.get().isActive()) || auxClientByUsername.isPresent()) {
             e = new ClientExistsException();
-        } else if (!isPasswordValid(clientDto)) {
+        } else if (!isPasswordValid(clientDto.getPassword())) {
             e = new PasswordFormatException();
         } else if (!isEmailValid(clientDto.getEmail())) {
             e = new EmailFormatException();
@@ -56,15 +62,15 @@ public class ClientServiceImpl implements UserDetailsService, ClientService {
         LOGGER.debug("Client: {} has passed validation rules", clientDto.getUsername());
 
         ClientModel client = null;
-        if(auxClient.isPresent()) {
-            client = auxClient.get();
+        if(auxClientByEmail.isPresent()) {
+            client = auxClientByEmail.get();
             client.setActive(true);
             client.setName(clientDto.getName());
-            client.setPassword(passwordEncoder.encode(clientDto.getPassword()));
+            client.setPassword(bCryptPasswordEncoder.encode(clientDto.getPasswordWithoutSalt()));
             client.setUsername(clientDto.getUsername());
         } else {
             clientDto.setActive(true);
-            clientDto.setPassword(passwordEncoder.encode(clientDto.getPassword()));
+            clientDto.setPassword(bCryptPasswordEncoder.encode(clientDto.getPasswordWithoutSalt()));
             client = new ClientModel(clientDto);
         }
 
@@ -74,6 +80,7 @@ public class ClientServiceImpl implements UserDetailsService, ClientService {
     }
 
     private boolean isEmailValid(String email) {
+        if(email == null) return false;
         String pattern = "^[\\p{L}0-9!#$%&'*+\\/=?^_`{|}~-][\\p{L}0-9.!#$%&'*+\\/=?^_`{|}~-]{0,63}@[\\p{L}0-9-]+(?:\\.[\\p{L}0-9-]{2,7})*$";
         return Pattern.matches(pattern, email);
     }
@@ -91,15 +98,19 @@ public class ClientServiceImpl implements UserDetailsService, ClientService {
         return UserPrinciple.build(optionalClientModel.get());
     }
 
-    public boolean isPasswordValid(ClientDto clientDto) {
-        if(clientDto.getPassword().isEmpty()) {
+    public boolean isPasswordValid(String password) {
+        if(password == null || password.isEmpty()) {
             return false;
         }
 
-        String decryptedPassword = clientDto.getPasswordWithoutSalt();
+        byte[] decodedBytes = Base64.getDecoder().decode(password);
+        String decodedString = new String(decodedBytes);
+        String decryptedPassword = decodedString.substring(0, decodedString.length() - 6);
+
         if (decryptedPassword.length() < 8) {
             return false;
         }
+
         Pattern pattern = Pattern.compile("^(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z]).{8,}$");
         Matcher matcher = pattern.matcher(decryptedPassword);
         return matcher.find();
