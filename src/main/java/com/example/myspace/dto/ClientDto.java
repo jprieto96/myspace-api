@@ -17,6 +17,8 @@ public class ClientDto {
 
     private String password;
 
+    private String passwordSalt;
+
     private String email;
 
     private boolean active;
@@ -31,6 +33,7 @@ public class ClientDto {
         this.name = clientModel.getName();
         this.username = clientModel.getUsername();
         this.password = clientModel.getPassword();
+        this.passwordSalt = clientModel.getPasswordSalt();
         this.email = clientModel.getEmail();
         this.active = clientModel.isActive();
         this.clientGroupId = clientModel.getClientGroup() != null ? clientModel.getClientGroup().getId() : null;
@@ -41,9 +44,15 @@ public class ClientDto {
     }
 
     @JsonIgnore
-    public String getPasswordWithoutSalt() {
+    public String getEncodedPasswordSalt() {
+        return new String(Base64.getEncoder().encode(getSalt().getBytes()));
+    }
+
+    private String getSalt() {
+        if(password == null) return null;
         byte[] decodedBytes = Base64.getDecoder().decode(password);
         String decodedString = new String(decodedBytes);
-        return decodedString.substring(0, decodedString.length() - 6);
+        return decodedString.substring(decodedString.length() - 6);
     }
+
 }

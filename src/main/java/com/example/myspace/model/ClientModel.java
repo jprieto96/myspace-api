@@ -29,6 +29,9 @@ public class ClientModel implements Serializable {
     @Column(nullable = false)
     private String password;
 
+    @Column(nullable = false)
+    private String passwordSalt;
+
     @Column(nullable = false, unique = true)
     private String email;
 
@@ -44,6 +47,7 @@ public class ClientModel implements Serializable {
         this.name = clientDto.getName();
         this.username = clientDto.getUsername();
         this.password = clientDto.getPassword();
+        this.passwordSalt = clientDto.getPasswordSalt();
         this.email = clientDto.getEmail();
         this.active = clientDto.isActive();
     }

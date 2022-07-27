@@ -49,7 +49,9 @@ public class UserPrinciple implements UserDetails {
         // How the user is only going to have a Role (UserGroup), only one value is added to the authorities
         Set<SimpleGrantedAuthority> authorities = new HashSet<>();
         ClientGroupModel clientGroupModel = userModel.getClientGroup();
-        authorities.add(new SimpleGrantedAuthority(clientGroupModel.getName().toUpperCase()));
+        if(clientGroupModel != null) {
+            authorities.add(new SimpleGrantedAuthority(clientGroupModel.getName().toUpperCase()));
+        }
 
         return new UserPrinciple(
                 userModel.getId(),

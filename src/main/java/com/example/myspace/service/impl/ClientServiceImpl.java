@@ -64,11 +64,13 @@ public class ClientServiceImpl implements UserDetailsService, ClientService {
             client = auxClientByEmail.get();
             client.setActive(true);
             client.setName(clientDto.getName());
-            client.setPassword(bCryptPasswordEncoder.encode(clientDto.getPasswordWithoutSalt()));
+            client.setPasswordSalt(clientDto.getEncodedPasswordSalt());
+            client.setPassword(bCryptPasswordEncoder.encode(clientDto.getPassword()));
             client.setUsername(clientDto.getUsername());
         } else {
             clientDto.setActive(true);
-            clientDto.setPassword(bCryptPasswordEncoder.encode(clientDto.getPasswordWithoutSalt()));
+            clientDto.setPasswordSalt(clientDto.getEncodedPasswordSalt());
+            clientDto.setPassword(bCryptPasswordEncoder.encode(clientDto.getPassword()));
             client = new ClientModel(clientDto);
         }
 
@@ -84,24 +86,37 @@ public class ClientServiceImpl implements UserDetailsService, ClientService {
     }
 
     @Override
-    public Optional<ClientModel> findByEmail(String email) {
-        return clientRepository.findByEmail(email);
+    public Optional<ClientDto> findByEmail(String email) {
+        Optional<ClientModel> optionalClientModel = clientRepository.findByEmail(email);
+        if(!optionalClientModel.isPresent()) return Optional.empty();
+        return Optional.ofNullable(optionalClientModel.get().toDto());
     }
 
     @Override
+    public Optional<ClientDto> findByUsername(String username) {
+        Optional<ClientModel> optionalClientModel = clientRepository.findByUsername(username);
+        if(!optionalClientModel.isPresent()) return Optional.empty();
+        return Optional.ofNullable(optionalClientModel.get().toDto());
+    }
+
+
+    @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<ClientModel> optionalClientModel = clientRepository.findByEmail(username);
-        if(!optionalClientModel.isPresent()) throw new UsernameNotFoundException("Invalid email or password.");
+        Optional<ClientModel> optionalClientModel = clientRepository.findByUsername(username);
+        if(!optionalClientModel.isPresent()) throw new UsernameNotFoundException("Invalid username.");
 
         return UserPrinciple.build(optionalClientModel.get());
     }
 
-    public boolean isPasswordValid(ClientDto clientDto) {
+    private boolean isPasswordValid(ClientDto clientDto) {
         if(clientDto.getPassword() == null || clientDto.getPassword().isEmpty()) {
             return false;
         }
 
-        String decryptedPassword = clientDto.getPasswordWithoutSalt();
+        byte[] decodedBytes = Base64.getDecoder().decode(clientDto.getPassword());
+        String decodedString = new String(decodedBytes);
+        String decryptedPassword = decodedString.substring(0, decodedString.length() - 6);
+
         if (decryptedPassword.length() < 8) {
             return false;
         }

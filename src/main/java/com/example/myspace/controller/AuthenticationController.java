@@ -1,5 +1,7 @@
 package com.example.myspace.controller;
 
+import com.example.myspace.dto.ClientDto;
+import com.example.myspace.service.ClientService;
 import com.example.myspace.util.Constants;
 import com.example.myspace.dto.AuthenticationDto;
 import com.example.myspace.model.ClientGroupModel;
@@ -19,7 +21,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Base64;
 import java.util.Date;
+import java.util.Optional;
 
 @RestController
 public class AuthenticationController {
@@ -27,16 +31,26 @@ public class AuthenticationController {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    @Autowired
+    private ClientService clientService;
+
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AuthenticationDto authenticationDto) throws AuthenticationException {
-        // Decrypt password
-        String password = authenticationDto.getPasswordWithoutSalt();
+
+        Optional<ClientDto> optionalClientDto = clientService.findByUsername(authenticationDto.getUsername());
+        String finalEncryptedPassword = authenticationDto.getPassword();
+        if(optionalClientDto.isPresent()) {
+            String decryptedPassword = new String(Base64.getDecoder().decode(authenticationDto.getPassword()));
+            String decryptedPasswordSalt = new String(Base64.getDecoder().decode(optionalClientDto.get().getPasswordSalt()));
+            String finalPassword = decryptedPassword + decryptedPasswordSalt;
+            finalEncryptedPassword = new String(Base64.getEncoder().encode(finalPassword.getBytes()));
+        }
 
         // Authentication is realized with the username and password
         final Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         authenticationDto.getUsername(),
-                        password
+                        finalEncryptedPassword
                 )
         );
         // The authentication object is saved in the context
@@ -51,7 +65,7 @@ public class AuthenticationController {
 
         // The userGroups are equals to the roles
         ClientGroupModel clientGroupModel = userPrinciple.getClientGroupModel();
-        String userGroupName = clientGroupModel.getName();
+        String userGroupName = clientGroupModel != null ? clientGroupModel.getName() : null;
 
         return Jwts.builder()
                 .claim("id", userPrinciple.getId())

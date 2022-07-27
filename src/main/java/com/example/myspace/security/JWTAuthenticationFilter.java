@@ -48,21 +48,21 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         // The token is obtained from Authorization header
         String token = request.getHeader(Constants.HEADER_AUTHORIZACION_KEY);
         if (token != null) {
-            // The token is processed and the userEmail is recovered (userEmail = username)
-            String userEmail = Jwts.parser()
+            // The token is processed and the username is recovered
+            String username = Jwts.parser()
                     .setSigningKey(Constants.SIGNING_KEY)
                     .parseClaimsJws(token.replace(Constants.TOKEN_BEARER_PREFIX, ""))
                     .getBody()
                     .getSubject();
 
             // If userEmail is in the token and there is not an authentication object in the context
-            if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-                // The user is loaded by username, in this case username is equal to userEmail
-                UserDetails userDetails = userDetailsService.loadUserByUsername(userEmail);
+                // The user is loaded by username
+                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-                // If the userEmail is equal that the load userEmail, the authentication object is created
-                if (userDetails.getUsername().equals(userEmail)) {
+                // If the username is equal that the load username, the authentication object is created
+                if (userDetails.getUsername().equals(username)) {
                     return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 }
             }

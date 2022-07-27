@@ -14,6 +14,9 @@ public class Constants {
     // Key suitable for signing the JWT using the HMAC-SHA-256 algorithm
     public static final String SIGNING_KEY = "secre"; // 1234
 
+    // Salt size
+    public static final Integer SALT_SIZE = 6;
+
     // URL for login
     public static final String LOGIN_URL = "/login";
 
