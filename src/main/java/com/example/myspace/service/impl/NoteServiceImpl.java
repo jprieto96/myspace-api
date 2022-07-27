@@ -3,6 +3,7 @@ package com.example.myspace.service.impl;
 import com.example.myspace.repository.NoteRepository;
 import com.example.myspace.dto.NoteDto;
 import com.example.myspace.service.NoteService;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +12,7 @@ import java.util.List;
 
 @Service
 @Transactional
+@Log4j2
 public class NoteServiceImpl implements NoteService {
 
     @Autowired

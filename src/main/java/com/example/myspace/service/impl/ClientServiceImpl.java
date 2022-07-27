@@ -6,8 +6,7 @@ import com.example.myspace.dto.ClientDto;
 import com.example.myspace.model.ClientModel;
 import com.example.myspace.security.UserPrinciple;
 import com.example.myspace.service.ClientService;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -23,9 +22,8 @@ import java.util.regex.Pattern;
 
 @Service
 @Transactional
+@Log4j2
 public class ClientServiceImpl implements UserDetailsService, ClientService {
-
-    private static final Logger LOGGER = LogManager.getLogger(ClientServiceImpl.class);
 
     @Autowired
     private ClientRepository clientRepository;
@@ -47,19 +45,19 @@ public class ClientServiceImpl implements UserDetailsService, ClientService {
             e = new EmptyNameException();
         } else if ((auxClientByEmail.isPresent() && auxClientByEmail.get().isActive()) || auxClientByUsername.isPresent()) {
             e = new ClientExistsException();
-        } else if (!isPasswordValid(clientDto.getPassword())) {
+        } else if (!isPasswordValid(clientDto)) {
             e = new PasswordFormatException();
         } else if (!isEmailValid(clientDto.getEmail())) {
             e = new EmailFormatException();
         }
 
         if (Optional.ofNullable(e).isPresent()) {
-            LOGGER.error("Client creation has not passed validation rules: {}",
+            log.error("Client creation has not passed validation rules: {}",
                     e.getMessage());
             throw e;
         }
 
-        LOGGER.debug("Client: {} has passed validation rules", clientDto.getUsername());
+        log.debug("Client: {} has passed validation rules", clientDto.getUsername());
 
         ClientModel client = null;
         if(auxClientByEmail.isPresent()) {
@@ -91,22 +89,19 @@ public class ClientServiceImpl implements UserDetailsService, ClientService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Optional<ClientModel> optionalClientModel = clientRepository.findByEmail(email);
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Optional<ClientModel> optionalClientModel = clientRepository.findByEmail(username);
         if(!optionalClientModel.isPresent()) throw new UsernameNotFoundException("Invalid email or password.");
 
         return UserPrinciple.build(optionalClientModel.get());
     }
 
-    public boolean isPasswordValid(String password) {
-        if(password == null || password.isEmpty()) {
+    public boolean isPasswordValid(ClientDto clientDto) {
+        if(clientDto.getPassword() == null || clientDto.getPassword().isEmpty()) {
             return false;
         }
 
-        byte[] decodedBytes = Base64.getDecoder().decode(password);
-        String decodedString = new String(decodedBytes);
-        String decryptedPassword = decodedString.substring(0, decodedString.length() - 6);
-
+        String decryptedPassword = clientDto.getPasswordWithoutSalt();
         if (decryptedPassword.length() < 8) {
             return false;
         }
