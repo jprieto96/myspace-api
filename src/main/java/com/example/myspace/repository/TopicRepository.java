@@ -8,4 +8,5 @@ import java.util.Optional;
 
 public interface TopicRepository extends JpaRepository<TopicModel, Long>, JpaSpecificationExecutor<TopicModel> {
     Optional<TopicModel> findById(Long id);
+    Optional<TopicModel> findByName(String name);
 }

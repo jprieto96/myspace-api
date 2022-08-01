@@ -1,12 +1,10 @@
 package com.example.myspace.exceptions.note;
 
-import com.example.myspace.exceptions.client.ClientException;
+public class ClientNoteNotFoundException extends NoteException {
 
-public class EmptyNoteException extends ClientException {
+    private static final String MESSAGE = "Note will not be created because the client introduced does not exist";
 
-    private static final String MESSAGE = "Empty note";
-
-    public EmptyNoteException() {
+    public ClientNoteNotFoundException() {
         super(MESSAGE);
     }
 }

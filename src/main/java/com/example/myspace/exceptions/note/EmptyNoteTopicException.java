@@ -1,10 +1,10 @@
 package com.example.myspace.exceptions.note;
 
-public class EmptyNoteException extends NoteException {
+public class EmptyNoteTopicException extends NoteException {
 
-    private static final String MESSAGE = "Empty note";
+    private static final String MESSAGE = "no topics selected for note";
 
-    public EmptyNoteException() {
+    public EmptyNoteTopicException() {
         super(MESSAGE);
     }
 }

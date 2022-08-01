@@ -1,6 +1,7 @@
 package com.example.myspace.dto;
 
 import com.example.myspace.model.ClientModel;
+import com.example.myspace.util.Constants;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
@@ -21,9 +22,9 @@ public class ClientDto {
 
     private String email;
 
-    private boolean active;
+    private boolean isAdmin;
 
-    private Long clientGroupId;
+    private boolean active;
 
     public ClientDto() {
     }
@@ -36,7 +37,7 @@ public class ClientDto {
         this.passwordSalt = clientModel.getPasswordSalt();
         this.email = clientModel.getEmail();
         this.active = clientModel.isActive();
-        this.clientGroupId = clientModel.getClientGroup() != null ? clientModel.getClientGroup().getId() : null;
+        this.isAdmin = clientModel.isAdmin();
     }
 
     public ClientModel toModel() {
@@ -52,7 +53,7 @@ public class ClientDto {
         if(password == null) return null;
         byte[] decodedBytes = Base64.getDecoder().decode(password);
         String decodedString = new String(decodedBytes);
-        return decodedString.substring(decodedString.length() - 6);
+        return decodedString.substring(decodedString.length() - Constants.SALT_SIZE);
     }
 
 }

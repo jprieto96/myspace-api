@@ -63,12 +63,14 @@ public class ClientServiceImpl implements UserDetailsService, ClientService {
         if(auxClientByEmail.isPresent()) {
             client = auxClientByEmail.get();
             client.setActive(true);
+            client.setAdmin(false);
             client.setName(clientDto.getName());
             client.setPasswordSalt(clientDto.getEncodedPasswordSalt());
             client.setPassword(bCryptPasswordEncoder.encode(clientDto.getPassword()));
             client.setUsername(clientDto.getUsername());
         } else {
             clientDto.setActive(true);
+            clientDto.setAdmin(false);
             clientDto.setPasswordSalt(clientDto.getEncodedPasswordSalt());
             clientDto.setPassword(bCryptPasswordEncoder.encode(clientDto.getPassword()));
             client = new ClientModel(clientDto);

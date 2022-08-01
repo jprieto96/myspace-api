@@ -1,10 +1,10 @@
-package com.example.myspace.exceptions.client;
+package com.example.myspace.exceptions.note;
 
-public class EmptyNameException extends ClientException {
+public class EmptyNoteException extends NoteException {
 
-    private static final String MESSAGE = "Empty name";
+    private static final String MESSAGE = "Empty note";
 
-    public EmptyNameException() {
+    public EmptyNoteException() {
         super(MESSAGE);
     }
 }

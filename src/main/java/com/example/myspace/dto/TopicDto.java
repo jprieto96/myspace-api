@@ -1,13 +1,23 @@
 package com.example.myspace.dto;
 
-import com.example.myspace.model.NoteTopicModel;
+import com.example.myspace.model.TopicModel;
+import lombok.Data;
 
-import java.util.List;
-
+@Data
 public class TopicDto {
 
     private Long id;
     private String name;
-    private List<NoteTopicModel> noteTopics;
 
+    public TopicDto() {
+    }
+
+    public TopicDto(TopicModel topicModel) {
+        this.id = topicModel.getId();
+        this.name = topicModel.getName();
+    }
+
+    public TopicModel toEntity() {
+        return new TopicModel(this);
+    }
 }

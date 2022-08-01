@@ -1,10 +1,10 @@
 package com.example.myspace.controller;
 
 import com.example.myspace.dto.ClientDto;
+import com.example.myspace.dto.UserRol;
 import com.example.myspace.service.ClientService;
 import com.example.myspace.util.Constants;
 import com.example.myspace.dto.AuthenticationDto;
-import com.example.myspace.model.ClientGroupModel;
 import com.example.myspace.security.UserPrinciple;
 import com.example.myspace.util.TokenResultUtil;
 import io.jsonwebtoken.Jwts;
@@ -64,8 +64,7 @@ public class AuthenticationController {
         UserPrinciple userPrinciple = (UserPrinciple) authentication.getPrincipal();
 
         // The userGroups are equals to the roles
-        ClientGroupModel clientGroupModel = userPrinciple.getClientGroupModel();
-        String userGroupName = clientGroupModel != null ? clientGroupModel.getName() : null;
+        String userGroupName = userPrinciple.isAdmin() ? UserRol.ADMIN.name() : UserRol.USER.name();
 
         return Jwts.builder()
                 .claim("id", userPrinciple.getId())

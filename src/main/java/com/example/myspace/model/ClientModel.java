@@ -7,11 +7,11 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.List;
 
 @Entity
 @Data
 @Table(name = "client")
-@NoArgsConstructor
 public class ClientModel implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -36,11 +36,13 @@ public class ClientModel implements Serializable {
     private String email;
 
     @Column(nullable = false)
-    private boolean active;
+    private boolean isAdmin;
 
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @ManyToOne(fetch = FetchType.EAGER)
-    private ClientGroupModel clientGroup;
+    @OneToMany(mappedBy = "clientModel")
+    private List<NoteModel> noteList;
+
+    @Column(nullable = false)
+    private boolean active;
 
     public ClientModel(ClientDto clientDto) {
         this.id = clientDto.getId();
@@ -49,7 +51,12 @@ public class ClientModel implements Serializable {
         this.password = clientDto.getPassword();
         this.passwordSalt = clientDto.getPasswordSalt();
         this.email = clientDto.getEmail();
+        this.isAdmin = clientDto.isAdmin();
         this.active = clientDto.isActive();
+    }
+
+    public ClientModel() {
+
     }
 
     public ClientDto toDto() {
