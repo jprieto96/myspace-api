@@ -14,9 +14,12 @@ import com.example.myspace.repository.NoteRepository;
 import com.example.myspace.dto.NoteDto;
 import com.example.myspace.repository.NoteTopicRepository;
 import com.example.myspace.repository.TopicRepository;
+import com.example.myspace.security.UserPrinciple;
 import com.example.myspace.service.NoteService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -42,7 +45,12 @@ public class NoteServiceImpl implements NoteService {
 
     @Override
     public Optional<NoteDto> createNote(NoteDto noteDto) throws NoteException {
-        Optional<ClientModel> optionalClientModel = clientRepository.findById(noteDto.getClientId());
+        // Get the username of user logged in
+        UserPrinciple userPrinciple = (UserPrinciple) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = userPrinciple.getUsername();
+
+        Optional<ClientModel> optionalClientModel = clientRepository.findByUsername(username);
+
 
         NoteException noteException = null;
         if(!optionalClientModel.isPresent()) {
