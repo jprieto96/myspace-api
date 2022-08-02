@@ -23,6 +23,8 @@ public class Constants {
     // URL for register in the app
     public static final String REGISTER_URL = "/register";
 
+    public static final String ACTUATOR_URL = "/actuator/**";
+
     // Constant used for adding the userGroup to the token
     public static final String AUTHORITIES_USER_GROUP = "userGroup";
 

@@ -32,6 +32,7 @@ public class SecurityConfiguration {
             .csrf().disable()
             .authorizeRequests().antMatchers(HttpMethod.POST, Constants.LOGIN_URL).permitAll()
             .antMatchers(HttpMethod.POST, Constants.REGISTER_URL).permitAll()
+            .antMatchers(Constants.ACTUATOR_URL).permitAll()
             .anyRequest().authenticated().and()
             .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
             .addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class);

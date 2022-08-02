@@ -89,6 +89,13 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-log4j2</artifactId>
 		</dependency>
+
+		<!-- Spring boot actuator -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+			<version>2.7.2</version>
+		</dependency>
 	</dependencies>
 	<profiles>
 		<profile>
@@ -96,6 +103,13 @@
 			<properties>
 				<packaging.type>jar</packaging.type>
 				<spring.profiles.active>local</spring.profiles.active>
+			</properties>
+		</profile>
+		<profile>
+			<id>dev</id>
+			<properties>
+				<packaging.type>jar</packaging.type>
+				<spring.profiles.active>dev</spring.profiles.active>
 			</properties>
 		</profile>
 		<profile>
