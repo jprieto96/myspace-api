@@ -113,6 +113,13 @@
 			</properties>
 		</profile>
 		<profile>
+			<id>kubernetesdev</id>
+			<properties>
+				<packaging.type>jar</packaging.type>
+				<spring.profiles.active>kubernetesdev</spring.profiles.active>
+			</properties>
+		</profile>
+		<profile>
 			<id>prod</id>
 			<properties>
 				<packaging.type>jar</packaging.type>
