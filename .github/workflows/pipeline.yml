@@ -2,9 +2,9 @@ name: Deployment Pipeline
 
 on:
   push:
-    branches: [master]
+    branches: [master, develop]
   pull_request:
-    branches: [master]
+    branches: [master, develop]
     types: [opened, synchronize]
 
 jobs:
@@ -28,8 +28,12 @@ jobs:
           distribution: 'corretto'
           java-version: '8'
           cache: 'maven'
-      - name: Build with Maven
-        run: mvn clean package -Dmaven.test.skip=true
+      - if: ${{ github.ref_name == 'master' }}
+        name: Build with Maven Prod Env
+        run: mvn -B clean package -DskipTests -P prod
+      - if: ${{ github.ref_name == 'develop' }}
+        name: Build with Maven Dev Env
+        run: mvn -B clean package -DskipTests -P dev
       - name: Upload JAR
         uses: actions/upload-artifact@v2
         with:
@@ -48,11 +52,15 @@ jobs:
           distribution: 'corretto'
           java-version: '8'
           cache: 'maven'
-      - name: Execute Tests
-        run: mvn test
+      - if: ${{ github.ref_name == 'master' }}
+        name: Execute Tests Prod Env
+        run: mvn -B clean verify -P prod
+      - if: ${{ github.ref_name == 'develop' }}
+        name: Execute Tests Dev Env
+        run: mvn -B clean verify -P dev
 
   build-push-docker-image:
-    if: ${{ github.event_name == 'push' }}
+    if: ${{ github.event_name == 'push' }} && ${{ github.ref_name == 'master' }}
     needs: [test]
     runs-on: ubuntu-18.04
     steps:
