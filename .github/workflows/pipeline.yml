@@ -47,6 +47,7 @@ jobs:
         run: mvn --batch-mode test
 
   build-push-docker-image:
+    if: ${{ github.event_name == 'push' }}
     needs: [test]
     runs-on: ubuntu-18.04
     steps:
@@ -61,7 +62,6 @@ jobs:
       - name: Build
         run: mvn --batch-mode --update-snapshots install -DskipTests
       - name: Docker Login
-        if: ${{ github.event_name == 'push' }}
         run: | # log into docker hub account
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
       - name: Get current date
