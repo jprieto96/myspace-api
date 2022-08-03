@@ -11,7 +11,7 @@ public interface NoteService {
     Optional<NoteDto> createNote(NoteDto noteDto) throws NoteException;
     NoteDto deleteNote(Long id) throws Exception;
     NoteDto showDetails(Long id) throws Exception;
-    List<NoteDto> listNotes();
+    List<NoteDto> listNotesByClient();
     NoteDto updateNote(NoteDto noteDto) throws Exception;
 
 }

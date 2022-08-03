@@ -111,7 +111,7 @@ public class NoteServiceImpl implements NoteService {
     }
 
     @Override
-    public List<NoteDto> listNotes() {
+    public List<NoteDto> listNotesByClient() {
         return null;
     }
 
