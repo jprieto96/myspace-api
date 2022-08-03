@@ -52,7 +52,7 @@ jobs:
 
   build-push-docker-image:
     if: ${{ github.event_name == 'push' && github.ref_name == 'master' }}
-    needs: [test]
+    needs: [tests]
     runs-on: ubuntu-18.04
     steps:
       - name: Set up JDK 1.8
