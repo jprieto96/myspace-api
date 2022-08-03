@@ -1,4 +1,5 @@
-FROM openjdk:8-jdk
+FROM openjdk:8-jdk-alpine
+EXPOSE 8080
 VOLUME /tmp
 COPY target/myspace-0.0.1-SNAPSHOT.jar myspace.jar
 ENTRYPOINT ["java", "-jar", "/myspace.jar"]
