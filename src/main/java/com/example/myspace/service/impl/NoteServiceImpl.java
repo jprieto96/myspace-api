@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -46,8 +47,7 @@ public class NoteServiceImpl implements NoteService {
     @Override
     public Optional<NoteDto> createNote(NoteDto noteDto) throws NoteException {
         // Get the username of user logged in
-        UserPrinciple userPrinciple = (UserPrinciple) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String username = userPrinciple.getUsername();
+        String username = getLoggedUser();
 
         Optional<ClientModel> optionalClientModel = clientRepository.findByUsername(username);
 
@@ -111,13 +111,40 @@ public class NoteServiceImpl implements NoteService {
     }
 
     @Override
-    public List<NoteDto> listNotesByClient() {
-        return null;
+    public List<NoteDto> listNotesByClient() throws NoteException {
+        // Get the username of user logged in
+        String username = getLoggedUser();
+
+        Optional<ClientModel> optionalClientModel = clientRepository.findByUsername(username);
+
+        NoteException noteException = null;
+        if(!optionalClientModel.isPresent()) {
+            noteException = new ClientNoteNotFoundException();
+        }
+
+        if (Optional.ofNullable(noteException).isPresent()) {
+            log.error("List notes by client has not passed validation rules: {}",
+                    noteException.getMessage());
+            throw noteException;
+        }
+
+        Long clientId = optionalClientModel.get().getId();
+        log.debug("Notes for client {} has passed validation rules", clientId);
+        List<NoteModel> noteModelList = noteRepository.findAllByClientId(clientId);
+        List<NoteDto> noteDtoList = noteModelList.stream().map(
+                noteModel -> noteModel.toDto()).collect(Collectors.toList()
+        );
+        return noteDtoList;
     }
 
     @Override
     public NoteDto updateNote(NoteDto noteDto) throws Exception {
         return null;
+    }
+
+    private String getLoggedUser() {
+        UserPrinciple userPrinciple = (UserPrinciple) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return userPrinciple.getUsername();
     }
 
 }
