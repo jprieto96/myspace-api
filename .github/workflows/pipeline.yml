@@ -52,12 +52,8 @@ jobs:
           distribution: 'corretto'
           java-version: '8'
           cache: 'maven'
-      - if: ${{ github.ref_name == 'master' }}
-        name: Execute Tests Prod Env
-        run: mvn -B clean verify -P prod
-      - if: ${{ github.ref_name == 'develop' }}
-        name: Execute Tests Dev Env
-        run: mvn -B clean verify -P dev
+      - name: Execute Tests
+        run: mvn -B clean verify -P test
 
   build-push-docker-image:
     if: ${{ github.event_name == 'push' }} && ${{ github.ref_name == 'master' }}
