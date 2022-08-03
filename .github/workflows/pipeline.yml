@@ -3,8 +3,6 @@ name: Deployment Pipeline
 on:
   push:
     branches: [master]
-    tags:
-      - 'v*'
   pull_request:
     branches: [master]
     types: [opened, synchronize]
