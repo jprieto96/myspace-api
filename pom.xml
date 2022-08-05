@@ -49,7 +49,7 @@
 			<optional>true</optional>
 		</dependency>
 
-		<!-- SMemory Database for Testing -->
+		<!-- Memory Database for Testing -->
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>

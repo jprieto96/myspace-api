@@ -12,6 +12,8 @@ public class NoteDto {
 
     private Long id;
     private String text;
+
+    private boolean active;
     private List<TopicDto> noteTopics;
     private Long clientId;
 
@@ -21,6 +23,7 @@ public class NoteDto {
     public NoteDto(NoteModel noteModel) {
         this.id = noteModel.getId();
         this.text = noteModel.getText();
+        this.active = noteModel.isActive();
         this.noteTopics = getNoteTopics(noteModel);
         this.clientId = noteModel.getClientModel() != null ? noteModel.getClientModel().getId() : null;
     }

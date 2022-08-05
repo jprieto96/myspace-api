@@ -1,9 +1,7 @@
 package com.example.myspace.model;
 
 import com.example.myspace.dto.ClientDto;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;

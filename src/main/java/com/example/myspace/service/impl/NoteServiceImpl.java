@@ -51,7 +51,6 @@ public class NoteServiceImpl implements NoteService {
 
         Optional<ClientModel> optionalClientModel = clientRepository.findByUsername(username);
 
-
         NoteException noteException = null;
         if(!optionalClientModel.isPresent()) {
             noteException = new ClientNoteNotFoundException();
@@ -71,6 +70,7 @@ public class NoteServiceImpl implements NoteService {
 
         NoteModel noteModel = new NoteModel();
         noteModel.setText(noteDto.getText());
+        noteModel.setActive(true);
         noteModel.setClientModel(optionalClientModel.get());
         NoteModel newNoteModel = noteRepository.save(noteModel);
         List<NoteTopicModel> noteTopicModelList = newNoteModel.getNoteTopicModels();
