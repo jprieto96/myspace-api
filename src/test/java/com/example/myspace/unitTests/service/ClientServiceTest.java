@@ -1,7 +1,8 @@
-package com.example.myspace.service;
+package com.example.myspace.unitTests.service;
 
 import com.example.myspace.model.ClientModel;
 import com.example.myspace.repository.ClientRepository;
+import com.example.myspace.service.ClientService;
 import com.example.myspace.service.impl.ClientServiceImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

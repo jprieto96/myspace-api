@@ -48,7 +48,7 @@ jobs:
           java-version: '8'
           cache: 'maven'
       - name: Execute Tests
-        run: mvn -B clean verify
+        run: mvn -B clean test
 
   build-push-docker-image:
     if: ${{ github.event_name == 'push' && github.ref_name == 'master' }}

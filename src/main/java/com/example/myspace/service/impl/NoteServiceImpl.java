@@ -23,6 +23,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -73,7 +74,7 @@ public class NoteServiceImpl implements NoteService {
         noteModel.setActive(true);
         noteModel.setClientModel(optionalClientModel.get());
         NoteModel newNoteModel = noteRepository.save(noteModel);
-        List<NoteTopicModel> noteTopicModelList = newNoteModel.getNoteTopicModels();
+        List<NoteTopicModel> noteTopicModelList = newNoteModel.getNoteTopicModels() != null ? newNoteModel.getNoteTopicModels() : new ArrayList<>();
         for(TopicDto topicDto : noteDto.getNoteTopics()) {
             Optional<TopicModel> optionalTopicModel = topicRepository.findByName(topicDto.getName());
             TopicModel topicModel = null;
@@ -86,8 +87,8 @@ public class NoteServiceImpl implements NoteService {
             NoteTopicModel noteTopicModel = new NoteTopicModel();
             noteTopicModel.setNoteModel(noteModel);
             noteTopicModel.setTopicModel(topicModel);
-            noteTopicModelList.add(noteTopicModel);
-            noteTopicRepository.save(noteTopicModel);
+            NoteTopicModel newNoteTopicModel = noteTopicRepository.save(noteTopicModel);
+            noteTopicModelList.add(newNoteTopicModel);
         }
         newNoteModel.setNoteTopicModels(noteTopicModelList);
         return Optional.ofNullable(newNoteModel.toDto());
@@ -143,6 +144,11 @@ public class NoteServiceImpl implements NoteService {
     }
 
     private String getLoggedUser() {
+        if(SecurityContextHolder.getContext() == null ||
+                SecurityContextHolder.getContext().getAuthentication() == null) {
+            return null;
+        }
+
         UserPrinciple userPrinciple = (UserPrinciple) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return userPrinciple.getUsername();
     }
