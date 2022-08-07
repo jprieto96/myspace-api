@@ -1,10 +1,7 @@
 package com.example.myspace.service.impl;
 
 import com.example.myspace.dto.TopicDto;
-import com.example.myspace.exceptions.note.ClientNoteNotFoundException;
-import com.example.myspace.exceptions.note.EmptyNoteException;
-import com.example.myspace.exceptions.note.EmptyNoteTopicException;
-import com.example.myspace.exceptions.note.NoteException;
+import com.example.myspace.exceptions.note.*;
 import com.example.myspace.model.ClientModel;
 import com.example.myspace.model.NoteModel;
 import com.example.myspace.model.NoteTopicModel;
@@ -102,13 +99,17 @@ public class NoteServiceImpl implements NoteService {
     }
 
     @Override
-    public NoteDto deleteNote(Long id) throws Exception {
+    public NoteDto deleteNote(Long id) throws NoteException {
         return null;
     }
 
     @Override
-    public NoteDto showDetails(Long id) throws Exception {
-        return null;
+    public NoteDto showDetails(Long id) throws NoteException {
+        Optional<NoteModel> optionalNoteModel = noteRepository.findById(id);
+        if(!optionalNoteModel.isPresent()) {
+            throw new NoteNotFoundException();
+        }
+        return optionalNoteModel.get().toDto();
     }
 
     @Override
@@ -139,7 +140,7 @@ public class NoteServiceImpl implements NoteService {
     }
 
     @Override
-    public NoteDto updateNote(NoteDto noteDto) throws Exception {
+    public NoteDto updateNote(NoteDto noteDto) throws NoteException {
         return null;
     }
 
