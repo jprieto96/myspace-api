@@ -56,11 +56,11 @@
 			<scope>runtime</scope>
 		</dependency>
 
-		<!-- MySQL -->
+		<!-- PostgreSQL -->
 		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<version>8.0.29</version>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>42.4.1</version>
 		</dependency>
 
 		<!-- Lombok -->
@@ -118,13 +118,6 @@
 			<properties>
 				<packaging.type>jar</packaging.type>
 				<spring.profiles.active>dev</spring.profiles.active>
-			</properties>
-		</profile>
-		<profile>
-			<id>kubernetesdev</id>
-			<properties>
-				<packaging.type>jar</packaging.type>
-				<spring.profiles.active>kubernetesdev</spring.profiles.active>
 			</properties>
 		</profile>
 		<profile>
