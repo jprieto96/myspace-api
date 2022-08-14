@@ -9,9 +9,9 @@ import java.util.Optional;
 public interface NoteService {
 
     Optional<NoteDto> createNote(NoteDto noteDto) throws NoteException;
-    NoteDto deleteNote(Long id) throws Exception;
-    NoteDto showDetails(Long id) throws Exception;
+    NoteDto deleteNote(Long id) throws NoteException;
+    NoteDto showDetails(Long id) throws NoteException;
     List<NoteDto> listNotesByClient() throws NoteException;
-    NoteDto updateNote(NoteDto noteDto) throws Exception;
+    NoteDto updateNote(NoteDto noteDto) throws NoteException;
 
 }

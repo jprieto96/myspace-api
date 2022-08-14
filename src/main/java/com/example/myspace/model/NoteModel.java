@@ -19,6 +19,9 @@ public class NoteModel implements Serializable {
     private Long id;
     private String text;
 
+    @Column(nullable = false)
+    private boolean active;
+
     @ManyToOne
     private ClientModel clientModel;
 

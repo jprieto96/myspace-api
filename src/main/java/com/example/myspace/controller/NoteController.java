@@ -48,4 +48,14 @@ public class NoteController {
         return ResponseEntity.status(HttpStatus.OK).body(noteList);
     }
 
+    @GetMapping(path = "/note/{id}")
+    public ResponseEntity<NoteDto> noteById(@PathVariable("id") String id) throws NoteException {
+        NoteDto notedto = noteService.showDetails(Long.parseLong(id));
+        if(notedto == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(notedto);
+    }
+
 }

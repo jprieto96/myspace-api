@@ -1,10 +1,7 @@
 package com.example.myspace.service.impl;
 
 import com.example.myspace.dto.TopicDto;
-import com.example.myspace.exceptions.note.ClientNoteNotFoundException;
-import com.example.myspace.exceptions.note.EmptyNoteException;
-import com.example.myspace.exceptions.note.EmptyNoteTopicException;
-import com.example.myspace.exceptions.note.NoteException;
+import com.example.myspace.exceptions.note.*;
 import com.example.myspace.model.ClientModel;
 import com.example.myspace.model.NoteModel;
 import com.example.myspace.model.NoteTopicModel;
@@ -23,6 +20,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -51,7 +49,6 @@ public class NoteServiceImpl implements NoteService {
 
         Optional<ClientModel> optionalClientModel = clientRepository.findByUsername(username);
 
-
         NoteException noteException = null;
         if(!optionalClientModel.isPresent()) {
             noteException = new ClientNoteNotFoundException();
@@ -71,9 +68,10 @@ public class NoteServiceImpl implements NoteService {
 
         NoteModel noteModel = new NoteModel();
         noteModel.setText(noteDto.getText());
+        noteModel.setActive(true);
         noteModel.setClientModel(optionalClientModel.get());
         NoteModel newNoteModel = noteRepository.save(noteModel);
-        List<NoteTopicModel> noteTopicModelList = newNoteModel.getNoteTopicModels();
+        List<NoteTopicModel> noteTopicModelList = newNoteModel.getNoteTopicModels() != null ? newNoteModel.getNoteTopicModels() : new ArrayList<>();
         for(TopicDto topicDto : noteDto.getNoteTopics()) {
             Optional<TopicModel> optionalTopicModel = topicRepository.findByName(topicDto.getName());
             TopicModel topicModel = null;
@@ -86,8 +84,8 @@ public class NoteServiceImpl implements NoteService {
             NoteTopicModel noteTopicModel = new NoteTopicModel();
             noteTopicModel.setNoteModel(noteModel);
             noteTopicModel.setTopicModel(topicModel);
-            noteTopicModelList.add(noteTopicModel);
-            noteTopicRepository.save(noteTopicModel);
+            NoteTopicModel newNoteTopicModel = noteTopicRepository.save(noteTopicModel);
+            noteTopicModelList.add(newNoteTopicModel);
         }
         newNoteModel.setNoteTopicModels(noteTopicModelList);
         return Optional.ofNullable(newNoteModel.toDto());
@@ -101,13 +99,17 @@ public class NoteServiceImpl implements NoteService {
     }
 
     @Override
-    public NoteDto deleteNote(Long id) throws Exception {
+    public NoteDto deleteNote(Long id) throws NoteException {
         return null;
     }
 
     @Override
-    public NoteDto showDetails(Long id) throws Exception {
-        return null;
+    public NoteDto showDetails(Long id) throws NoteException {
+        Optional<NoteModel> optionalNoteModel = noteRepository.findById(id);
+        if(!optionalNoteModel.isPresent()) {
+            throw new NoteNotFoundException();
+        }
+        return optionalNoteModel.get().toDto();
     }
 
     @Override
@@ -138,11 +140,16 @@ public class NoteServiceImpl implements NoteService {
     }
 
     @Override
-    public NoteDto updateNote(NoteDto noteDto) throws Exception {
+    public NoteDto updateNote(NoteDto noteDto) throws NoteException {
         return null;
     }
 
     private String getLoggedUser() {
+        if(SecurityContextHolder.getContext() == null ||
+                SecurityContextHolder.getContext().getAuthentication() == null) {
+            return null;
+        }
+
         UserPrinciple userPrinciple = (UserPrinciple) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return userPrinciple.getUsername();
     }
