@@ -1,9 +1,9 @@
 package com.example.myspace.unitTests.service;
 
-import com.example.myspace.model.ClientModel;
-import com.example.myspace.repository.ClientRepository;
-import com.example.myspace.service.ClientService;
-import com.example.myspace.service.impl.ClientServiceImpl;
+import com.example.myspace.client.ClientModel;
+import com.example.myspace.client.ClientRepository;
+import com.example.myspace.client.ClientService;
+import com.example.myspace.client.ClientServiceImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
