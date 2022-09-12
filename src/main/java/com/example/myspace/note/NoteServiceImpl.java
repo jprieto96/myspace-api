@@ -1,7 +1,6 @@
 package com.example.myspace.note;
 
 import com.example.myspace.topic.TopicDto;
-import com.example.myspace.exceptions.note.*;
 import com.example.myspace.client.ClientModel;
 import com.example.myspace.notetopic.NoteTopicModel;
 import com.example.myspace.topic.TopicModel;

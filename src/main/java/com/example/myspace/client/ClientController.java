@@ -1,6 +1,6 @@
 package com.example.myspace.client;
 
-import com.example.myspace.exceptions.client.ClientException;
+import com.example.myspace.client.exceptions.ClientException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -1,11 +1,7 @@
 package com.example.myspace.client;
 
-import com.example.myspace.exceptions.client.*;
-import com.example.myspace.client.ClientRepository;
-import com.example.myspace.client.ClientDto;
-import com.example.myspace.client.ClientModel;
+import com.example.myspace.client.exceptions.*;
 import com.example.myspace.security.UserPrinciple;
-import com.example.myspace.client.ClientService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;

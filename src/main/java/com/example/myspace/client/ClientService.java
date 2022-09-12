@@ -1,7 +1,7 @@
 package com.example.myspace.client;
 
-import com.example.myspace.client.ClientDto;
-import com.example.myspace.exceptions.client.ClientException;
+
+import com.example.myspace.client.exceptions.ClientException;
 
 import java.util.Optional;
 
