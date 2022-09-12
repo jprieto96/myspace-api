@@ -1,7 +1,7 @@
 package com.example.myspace.security;
 
-import com.example.myspace.dto.UserRol;
-import com.example.myspace.model.ClientModel;
+import com.example.myspace.client.ClientRol;
+import com.example.myspace.client.ClientModel;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
@@ -49,10 +49,10 @@ public class UserPrinciple implements UserDetails {
         // How the user is only going to have a Role (UserGroup), only one value is added to the authorities
         Set<SimpleGrantedAuthority> authorities = new HashSet<>();
         if(userModel.isAdmin()) {
-            authorities.add(new SimpleGrantedAuthority(UserRol.ADMIN.name()));
+            authorities.add(new SimpleGrantedAuthority(ClientRol.ADMIN.name()));
         }
         else {
-            authorities.add(new SimpleGrantedAuthority(UserRol.USER.name()));
+            authorities.add(new SimpleGrantedAuthority(ClientRol.USER.name()));
         }
 
         return new UserPrinciple(
