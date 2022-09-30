@@ -23,11 +23,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Set up JDK 1.8
+      - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
           distribution: 'corretto'
-          java-version: '8'
+          java-version: '17'
           cache: 'maven'
       - if: ${{ github.ref_name == 'main' }}
         name: Build with Maven Prod Env
@@ -42,11 +42,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Set up JDK 1.8
+      - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
           distribution: 'corretto'
-          java-version: '8'
+          java-version: '17'
           cache: 'maven'
       - name: Execute Tests
         run: mvn -B clean test
@@ -58,11 +58,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Set up JDK 1.8
+      - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
           distribution: 'corretto'
-          java-version: '8'
+          java-version: '17'
           cache: 'maven'
       - name: Build with Maven Prod Env
         run: mvn -B clean package -DskipTests -P prod
