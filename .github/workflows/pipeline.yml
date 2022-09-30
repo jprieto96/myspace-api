@@ -1,4 +1,4 @@
-# Pipeline
+# Pipeline myspace-api
 name: Deployment Pipeline
 
 on:
