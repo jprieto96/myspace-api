@@ -3,9 +3,9 @@ name: Deployment Pipeline
 
 on:
   push:
-    branches: [master, develop]
+    branches: [main, develop]
   pull_request:
-    branches: [master, develop]
+    branches: [main, develop]
     types: [opened, synchronize]
 
 jobs:
@@ -29,7 +29,7 @@ jobs:
           distribution: 'corretto'
           java-version: '8'
           cache: 'maven'
-      - if: ${{ github.ref_name == 'master' }}
+      - if: ${{ github.ref_name == 'main' }}
         name: Build with Maven Prod Env
         run: mvn -B clean package -DskipTests -P prod
       - if: ${{ github.ref_name == 'develop' }}
@@ -52,7 +52,7 @@ jobs:
         run: mvn -B clean test
 
   build-push-docker-image:
-    if: ${{ github.event_name == 'push' && github.ref_name == 'master' }}
+    if: ${{ github.event_name == 'push' && github.ref_name == 'main' }}
     needs: [tests]
     runs-on: ubuntu-18.04
     steps:
