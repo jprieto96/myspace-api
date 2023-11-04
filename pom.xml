@@ -71,11 +71,11 @@
 			<scope>test</scope>
 		</dependency>
 
-		<!-- PostgreSQL -->
+		<!-- MySql -->
 		<dependency>
-			<groupId>org.postgresql</groupId>
-			<artifactId>postgresql</artifactId>
-			<version>42.5.0</version>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>8.0.33</version>
 		</dependency>
 
 		<!-- JSON Web Token -->
@@ -112,13 +112,6 @@
 			<properties>
 				<packaging.type>jar</packaging.type>
 				<spring.profiles.active>local</spring.profiles.active>
-			</properties>
-		</profile>
-		<profile>
-			<id>dev</id>
-			<properties>
-				<packaging.type>jar</packaging.type>
-				<spring.profiles.active>dev</spring.profiles.active>
 			</properties>
 		</profile>
 		<profile>
