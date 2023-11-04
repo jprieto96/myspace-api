@@ -3,7 +3,7 @@ package com.example.myspace.util;
 public class Constants {
 
     // Authorization key in the Header
-    public static final String HEADER_AUTHORIZACION_KEY  = "Authorization";
+    public static final String HEADER_AUTHORIZATION_KEY  = "Authorization";
 
     // Token prefix
     public static final String TOKEN_BEARER_PREFIX  = "Bearer ";

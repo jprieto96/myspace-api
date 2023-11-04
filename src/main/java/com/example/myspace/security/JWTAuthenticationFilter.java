@@ -28,7 +28,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         // The header authorization is obtained
-        String header = request.getHeader(Constants.HEADER_AUTHORIZACION_KEY);
+        String header = request.getHeader(Constants.HEADER_AUTHORIZATION_KEY);
         // If the header does not exist or does not start with "Bearer", the authentication is not followed
         if (header == null || !header.startsWith(Constants.TOKEN_BEARER_PREFIX)) {
             chain.doFilter(request, response);
@@ -46,7 +46,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
     private UsernamePasswordAuthenticationToken getAuthenticationToken(HttpServletRequest request) {
 
         // The token is obtained from Authorization header
-        String token = request.getHeader(Constants.HEADER_AUTHORIZACION_KEY);
+        String token = request.getHeader(Constants.HEADER_AUTHORIZATION_KEY);
         if (token != null) {
             // The token is processed and the username is recovered
             String username = Jwts.parser()
