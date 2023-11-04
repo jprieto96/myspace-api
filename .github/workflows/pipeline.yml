@@ -11,6 +11,7 @@ on:
 jobs:
 
   avoid_redundancy:
+    name: Avoid redundancy
     runs-on: ubuntu-22.04
     steps:
       - name: Cancel Previous Redundant Builds
@@ -19,6 +20,7 @@ jobs:
           access_token: ${{ github.token }}
 
   build:
+    name: Build Project
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
@@ -43,6 +45,7 @@ jobs:
 
 
   tests:
+    name: Execute Tests
     needs: [build]
     runs-on: ubuntu-22.04
     steps:
@@ -58,6 +61,7 @@ jobs:
         run: mvn -B clean test
 
   build-push-docker-image:
+    name: Push Docker Image to Docker Hub
     if: ${{ github.event_name == 'push' && github.ref_name == 'main' }}
     needs: [tests]
     runs-on: ubuntu-22.04
@@ -92,9 +96,9 @@ jobs:
           build-args: PROFILE=prod
 
   deploy:
+    name: Deploy to Elastic Beanstalk
     if: ${{ github.ref_name == 'main' }}
     needs: [tests]
-    name: Deploy to Elastic Beanstalk
     runs-on: ubuntu-22.04
     steps:
       - name: Download JAR
