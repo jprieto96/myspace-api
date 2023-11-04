@@ -1,4 +1,4 @@
-FROM openjdk:8-jdk-alpine
+FROM openjdk:17-jdk-alpine
 EXPOSE 8080
 ARG PROFILE
 ENV PROFILE_VAR=$PROFILE
