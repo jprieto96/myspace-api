@@ -3,7 +3,10 @@ name: Deployment Pipeline
 
 on:
   push:
-    branches: [main]
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+    types: [opened, synchronize]
 
 jobs:
 
@@ -26,8 +29,12 @@ jobs:
           distribution: 'corretto'
           java-version: '17'
           cache: 'maven'
-      - name: Build with Maven Prod Env
+      - if: ${{ github.ref_name == 'main' }}
+        name: Build with Maven Prod Env
         run: mvn -B clean package -DskipTests -P prod
+      - if: ${{ github.ref_name == 'develop' }}
+        name: Build with Maven Dev Env
+        run: mvn -B clean package -DskipTests -P dev
 
   tests:
     needs: [build]
@@ -44,37 +51,8 @@ jobs:
       - name: Execute Tests
         run: mvn -B clean test
 
-  sonar:
-    needs: [tests]
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'corretto'
-          java-version: '17'
-          cache: 'maven'
-      - name: Cache SonarQube packages
-        uses: actions/cache@v1
-        with:
-          path: ~/.sonar/cache
-          key: ${{ runner.os }}-sonar
-          restore-keys: ${{ runner.os }}-sonar
-      - name: Cache Maven packages
-        uses: actions/cache@v1
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
-      - name: Build and analyze
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=myspace -Dsonar.projectName='myspace'
-
   build-push-docker-image:
+    if: ${{ github.event_name == 'push' && github.ref_name == 'main' }}
     needs: [tests]
     runs-on: ubuntu-22.04
     steps:
