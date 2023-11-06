@@ -110,8 +110,8 @@ jobs:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           use_existing_version_if_available: true
-          application_name: myspace
-          environment_name: prod
+          application_name: ${{ secrets.AWS_EB_APPLICATION_NAME }}
+          environment_name: ${{ secrets.AWS_EB_ENVIRONMENT_NAME }}
           version_label: ${{github.SHA}}
-          region: eu-west-3
+          region: ${{ secrets.AWS_REGION_DEPLOYMENT }}
           deployment_package: myspace-0.0.1-SNAPSHOT.jar
