@@ -60,7 +60,7 @@ jobs:
         run: mvn -B clean test
 
   build-push-docker-image:
-    name: Push Docker Image to Docker Hub
+    name: Push Production Docker Image to Docker Hub
     if: ${{ github.event_name == 'push' && github.ref_name == 'main' }}
     needs: [tests]
     runs-on: ubuntu-22.04
@@ -96,7 +96,6 @@ jobs:
 
   deploy:
     name: Deploy to Elastic Beanstalk
-    if: ${{ github.event_name == 'push' && github.ref_name == 'main' }}
     needs: [tests]
     runs-on: ubuntu-22.04
     steps:
@@ -104,14 +103,27 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: artifact
-      - name: Deploy to EB
+      - if: ${{ github.event_name == 'push' && github.ref_name == 'main' }}
+        name: Deploy to EB
         uses: einaregilsson/beanstalk-deploy@v13
         with:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           use_existing_version_if_available: true
           application_name: ${{ secrets.AWS_EB_APPLICATION_NAME }}
-          environment_name: ${{ secrets.AWS_EB_ENVIRONMENT_NAME }}
+          environment_name: prod
+          version_label: ${{github.SHA}}
+          region: ${{ secrets.AWS_REGION_DEPLOYMENT }}
+          deployment_package: myspace-0.0.1-SNAPSHOT.jar
+      - if: ${{ github.event_name == 'push' && github.ref_name == 'develop' }}
+        name: Deploy to EB
+        uses: einaregilsson/beanstalk-deploy@v13
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          use_existing_version_if_available: true
+          application_name: ${{ secrets.AWS_EB_APPLICATION_NAME }}
+          environment_name: develop
           version_label: ${{github.SHA}}
           region: ${{ secrets.AWS_REGION_DEPLOYMENT }}
           deployment_package: myspace-0.0.1-SNAPSHOT.jar
