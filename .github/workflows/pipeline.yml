@@ -31,12 +31,6 @@ jobs:
           distribution: 'corretto'
           java-version: '17'
           cache: 'maven'
-      - name: Cache Maven packages
-        uses: actions/cache@v1
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
       - if: ${{ github.ref_name == 'main' }}
         name: Build with Maven Prod Env
         run: mvn -B clean package -DskipTests -P prod
@@ -62,12 +56,6 @@ jobs:
           distribution: 'corretto'
           java-version: '17'
           cache: 'maven'
-      - name: Cache Maven packages
-        uses: actions/cache@v1
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
       - name: Execute Tests
         run: mvn -B clean test
 
@@ -85,12 +73,6 @@ jobs:
           distribution: 'corretto'
           java-version: '17'
           cache: 'maven'
-      - name: Cache Maven packages
-        uses: actions/cache@v1
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
       - name: Build with Maven Prod Env
         run: mvn -B clean package -DskipTests -P prod
       - name: Set up Docker Build
