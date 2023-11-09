@@ -86,25 +86,21 @@ public class NoteServiceImpl implements NoteService {
         return Optional.ofNullable(newNoteModel.toDto());
     }
 
-    private boolean isTopicNameEmpty(List<TopicDto> noteTopics) {
-        for(TopicDto topicDto : noteTopics) {
-            if(topicDto.getName().isEmpty()) return true;
-        }
-        return false;
-    }
-
     @Override
-    public NoteDto deleteNote(Long id) throws NoteException {
-        return null;
-    }
-
-    @Override
-    public NoteDto showDetails(Long id) throws NoteException {
-        Optional<NoteModel> optionalNoteModel = noteRepository.findById(id);
+    public void deleteNote(Long noteId) throws NoteException {
+        Optional<NoteModel> optionalNoteModel = noteRepository.findById(noteId);
         if(!optionalNoteModel.isPresent()) {
+            log.error("Note does not exist");
             throw new NoteNotFoundException();
         }
-        return optionalNoteModel.get().toDto();
+
+        noteTopicRepository.deleteNoteTopicModelByNoteModelId(noteId);
+        // Get topics that are going to be without an associated topic
+        List<TopicModel> topicsToDelete = topicRepository.getTopicsToDelete(noteId);
+        topicRepository.deleteAllInBatch(topicsToDelete);
+
+        // Delete the note
+        noteRepository.delete(optionalNoteModel.get());
     }
 
     @Override
@@ -131,12 +127,9 @@ public class NoteServiceImpl implements NoteService {
         List<NoteDto> noteDtoList = noteModelList.stream().map(
                 noteModel -> noteModel.toDto()).collect(Collectors.toList()
         );
-        return noteDtoList;
-    }
 
-    @Override
-    public NoteDto updateNote(NoteDto noteDto) throws NoteException {
-        return null;
+
+        return noteDtoList;
     }
 
     private String getLoggedUser() {
@@ -147,6 +140,13 @@ public class NoteServiceImpl implements NoteService {
 
         UserPrinciple userPrinciple = (UserPrinciple) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return userPrinciple.getUsername();
+    }
+
+    private boolean isTopicNameEmpty(List<TopicDto> noteTopics) {
+        for(TopicDto topicDto : noteTopics) {
+            if(topicDto.getName().isEmpty()) return true;
+        }
+        return false;
     }
 
 }
