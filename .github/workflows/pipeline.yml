@@ -41,14 +41,14 @@ jobs:
         name: Build with Maven Dev Env
         run: mvn -B clean package -DskipTests -P dev
 
-      - name: Execute Tests
-        run: mvn -B clean test
-
       - name: Upload JAR
         uses: actions/upload-artifact@v2
         with:
           name: artifact
           path: target/myspace-0.0.1-SNAPSHOT.jar
+
+      - name: Execute Tests
+        run: mvn -B clean test
 
   push-docker-image:
     name: Push Production Docker Image to Docker Hub
