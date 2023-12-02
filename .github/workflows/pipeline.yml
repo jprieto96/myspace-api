@@ -13,6 +13,7 @@ jobs:
   avoid_redundancy:
     name: Avoid redundancy
     runs-on: ubuntu-22.04
+    timeout-minutes: 2
     steps:
       - name: Cancel Previous Redundant Builds
         uses: styfle/cancel-workflow-action@0.9.1
@@ -20,8 +21,9 @@ jobs:
           access_token: ${{ github.token }}
 
   build:
-    name: Build Project
+    name: Build Project and Execute Unit/Integration/Acceptance Tests
     runs-on: ubuntu-22.04
+    timeout-minutes: 5
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -55,6 +57,7 @@ jobs:
     if: ${{ github.event_name == 'push' && github.ref_name == 'main' }}
     needs: [build]
     runs-on: ubuntu-22.04
+    timeout-minutes: 5
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -91,6 +94,7 @@ jobs:
     name: Deploy to AWS Elastic Beanstalk
     needs: [build]
     runs-on: ubuntu-22.04
+    timeout-minutes: 5
     steps:
       - name: Download JAR
         uses: actions/download-artifact@v2
