@@ -21,7 +21,7 @@ jobs:
           access_token: ${{ github.token }}
 
   build:
-    name: Build Project and Execute Unit/Integration/Acceptance Tests
+    name: Build Project and Execute Tests
     runs-on: ubuntu-22.04
     timeout-minutes: 5
     steps:
