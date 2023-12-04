@@ -24,9 +24,6 @@ public class ClientServiceImpl implements UserDetailsService, ClientService {
     @Autowired
     private ClientRepository clientRepository;
 
-    @Autowired
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
-
     @Override
     public Optional<ClientDto> create(ClientDto clientDto) throws ClientException {
         if (clientDto == null) {
@@ -41,7 +38,7 @@ public class ClientServiceImpl implements UserDetailsService, ClientService {
             e = new EmptyUserNameException();
         } else if (clientDto.getName() == null || clientDto.getName().isEmpty()) {
             e = new EmptyNameException();
-        } else if ((auxClientByEmail.isPresent() && auxClientByEmail.get().isActive()) || auxClientByUsername.isPresent()) {
+        } else if ((auxClientByEmail.isPresent() && auxClientByEmail.get().isActive()) || (auxClientByUsername.isPresent() && auxClientByUsername.get().isActive())) {
             e = new ClientExistsException();
         } else if (!isPasswordValid(clientDto)) {
             e = new PasswordFormatException();
@@ -58,6 +55,7 @@ public class ClientServiceImpl implements UserDetailsService, ClientService {
         log.debug("Client: {} has passed validation rules", clientDto.getUsername());
 
         ClientModel client = null;
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
         if(auxClientByEmail.isPresent()) {
             client = auxClientByEmail.get();
             client.setActive(true);

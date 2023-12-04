@@ -11,6 +11,7 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 class ClientServiceTest {
@@ -55,7 +56,7 @@ class ClientServiceTest {
     void createClientNonExistentOk() {
         when(clientRepository.findByEmail(clientIn.getEmail())).thenReturn(Optional.empty());
         when(clientRepository.findByUsername(clientIn.getUsername())).thenReturn(Optional.empty());
-        when(clientRepository.save(clientIn)).thenReturn(clientOut);
+        when(clientRepository.save(any())).thenReturn(clientOut);
 
         try {
             ClientDto clientDto = clientService.create(clientIn.toDto()).orElse(null);
@@ -74,9 +75,9 @@ class ClientServiceTest {
 
     @Test
     void createExistentClientOk() {
-        when(clientRepository.findByEmail(clientIn.getEmail())).thenReturn(Optional.of(clientOut));
-        when(clientRepository.findByUsername(clientIn.getUsername())).thenReturn(Optional.of(clientOut));
-        when(clientRepository.save(clientIn)).thenReturn(clientOut);
+        when(clientRepository.findByEmail(clientIn.getEmail())).thenReturn(Optional.of(clientIn));
+        when(clientRepository.findByUsername(clientIn.getUsername())).thenReturn(Optional.of(clientIn));
+        when(clientRepository.save(any())).thenReturn(clientOut);
 
         try {
             ClientDto clientDto = clientService.create(clientIn.toDto()).orElse(null);
