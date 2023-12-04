@@ -162,7 +162,7 @@ class ClientServiceTest {
     @Test
     void createNullClient() {
         try {
-            ClientDto clientDto = clientService.create(null).orElse(null);
+            clientService.create(null);
         } catch (Exception e) {
             Assertions.assertEquals(e.getMessage(), "Null client provided");
         }
