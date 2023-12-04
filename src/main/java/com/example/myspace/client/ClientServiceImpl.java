@@ -29,15 +29,17 @@ public class ClientServiceImpl implements UserDetailsService, ClientService {
 
     @Override
     public Optional<ClientDto> create(ClientDto clientDto) throws ClientException {
+        if (clientDto == null) {
+            throw new NullClientException();
+        }
+
         Optional<ClientModel> auxClientByEmail = clientRepository.findByEmail(clientDto.getEmail());
         Optional<ClientModel> auxClientByUsername = clientRepository.findByUsername(clientDto.getUsername());
 
         ClientException e = null;
-        if (clientDto == null) {
-            e = new ClientNotFoundException();
-        } else if(clientDto.getUsername() == null || clientDto.getUsername().equals("")) {
+        if(clientDto.getUsername() == null || clientDto.getUsername().isEmpty()) {
             e = new EmptyUserNameException();
-        } else if (clientDto.getName() == null || clientDto.getName().equals("")) {
+        } else if (clientDto.getName() == null || clientDto.getName().isEmpty()) {
             e = new EmptyNameException();
         } else if ((auxClientByEmail.isPresent() && auxClientByEmail.get().isActive()) || auxClientByUsername.isPresent()) {
             e = new ClientExistsException();
