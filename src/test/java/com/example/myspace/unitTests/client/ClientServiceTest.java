@@ -1,4 +1,4 @@
-package com.example.myspace.unitTests.service;
+package com.example.myspace.unitTests.client;
 
 import com.example.myspace.client.*;
 import org.junit.jupiter.api.AfterEach;
