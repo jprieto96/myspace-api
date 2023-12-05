@@ -33,8 +33,8 @@ public class ClientRepositoryTest {
         try {
             ClientModel clientOut = clientRepository.findByEmail(clientIn.getEmail()).orElse(null);
             Assertions.assertNotNull(clientOut);
-            Assertions.assertEquals(clientOut.getId(), 1);
             Assertions.assertTrue(clientOut.isActive());
+            Assertions.assertFalse(clientOut.isAdmin());
             Assertions.assertEquals(clientIn.getName(), clientOut.getName());
             Assertions.assertEquals(clientIn.getUsername(), clientOut.getUsername());
             Assertions.assertEquals(clientIn.getPassword(), clientOut.getPassword());
@@ -73,8 +73,8 @@ public class ClientRepositoryTest {
         try {
             ClientModel clientOut = clientRepository.findByUsername(clientIn.getUsername()).orElse(null);
             Assertions.assertNotNull(clientOut);
-            Assertions.assertEquals(clientOut.getId(), 1);
             Assertions.assertTrue(clientOut.isActive());
+            Assertions.assertFalse(clientOut.isAdmin());
             Assertions.assertEquals(clientIn.getName(), clientOut.getName());
             Assertions.assertEquals(clientIn.getUsername(), clientOut.getUsername());
             Assertions.assertEquals(clientIn.getPassword(), clientOut.getPassword());
