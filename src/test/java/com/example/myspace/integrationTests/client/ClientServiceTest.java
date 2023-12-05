@@ -1,69 +1,46 @@
-package com.example.myspace.unitTests.client;
+package com.example.myspace.integrationTests.client;
 
-import com.example.myspace.client.*;
+import com.example.myspace.client.ClientDto;
+import com.example.myspace.client.ClientModel;
+import com.example.myspace.client.ClientRepository;
+import com.example.myspace.client.ClientService;
 import org.junit.jupiter.api.*;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.Optional;
+@SpringBootTest
+public class ClientServiceTest {
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+    @Autowired
+    private ClientService clientService;
 
-class ClientServiceTest {
-
-    @Mock
+    @Autowired
     private ClientRepository clientRepository;
 
-    @InjectMocks
-    private ClientService clientService = new ClientServiceImpl();
+    private static ClientModel clientIn;
+    private static ClientModel clientOut;
 
-    private AutoCloseable autoCloseable;
-    private ClientModel clientIn;
-    private ClientModel clientOut;
-
-    @BeforeEach
-    void setUpInAndOutClients() {
-        autoCloseable = MockitoAnnotations.openMocks(this);
-
-        clientIn = new ClientModel();
-        clientIn.setName("Test");
-        clientIn.setUsername("test");
-        clientIn.setPassword("Sm9zZTEyMzRAcmU1JSY="); // Jose1234 + Salt(@re5%&)
-        clientIn.setPasswordSalt("QHJlNSUm"); // @re5%&
-        clientIn.setEmail("test@mail.com");
-
-        clientOut = new ClientModel();
-        clientOut.setId(1L);
-        clientOut.setActive(true);
-        clientOut.setName("Test");
-        clientOut.setUsername("test");
-        clientOut.setPassword("$2a$12$e/3zzZhyu1EdU3k6rY0GReNl9lF.qtSse8PZYS2yWD5noIur0LzF."); // Jose1234 + Salt(@re5%&)
-        clientOut.setPasswordSalt("QHJlNSUm"); // @re5%&
-        clientOut.setEmail("test@mail.com");
+    @BeforeAll
+    static void beforeAll() {
+        clientIn = getClientIn();
+        clientOut = getClientOut();
     }
 
-    @AfterEach
-    void tearDown() throws Exception {
-        autoCloseable.close();
+    @BeforeEach
+    void setUp() {
+        clientRepository.deleteAll();
     }
 
     @Test
     @DisplayName("Create non existent client")
     void createClientNonExistentOk() {
-        when(clientRepository.findByEmail(clientIn.getEmail())).thenReturn(Optional.empty());
-        when(clientRepository.findByUsername(clientIn.getUsername())).thenReturn(Optional.empty());
-        when(clientRepository.save(any())).thenReturn(clientOut);
-
         try {
             ClientDto clientDto = clientService.create(clientIn.toDto()).orElse(null);
             Assertions.assertNotNull(clientDto);
-            Assertions.assertEquals(clientDto.getId(), 1);
             Assertions.assertTrue(clientDto.isActive());
+            Assertions.assertFalse(clientDto.isAdmin());
             Assertions.assertEquals(clientDto.getName(), clientOut.getName());
             Assertions.assertEquals(clientDto.getUsername(), clientOut.getUsername());
-            Assertions.assertEquals(clientDto.getPassword(), clientOut.getPassword());
             Assertions.assertEquals(clientDto.getPasswordSalt(), clientOut.getPasswordSalt());
             Assertions.assertEquals(clientDto.getEmail(), clientOut.getEmail());
         } catch (Exception e) {
@@ -74,18 +51,16 @@ class ClientServiceTest {
     @Test
     @DisplayName("Create existent and non active client")
     void createExistentClientOk() {
-        when(clientRepository.findByEmail(clientIn.getEmail())).thenReturn(Optional.of(clientIn));
-        when(clientRepository.findByUsername(clientIn.getUsername())).thenReturn(Optional.of(clientIn));
-        when(clientRepository.save(any())).thenReturn(clientOut);
-
         try {
+            clientIn.setActive(false);
+            clientIn.setAdmin(false);
+            clientRepository.save(clientIn);
             ClientDto clientDto = clientService.create(clientIn.toDto()).orElse(null);
             Assertions.assertNotNull(clientDto);
-            Assertions.assertEquals(clientDto.getId(), 1);
             Assertions.assertTrue(clientDto.isActive());
+            Assertions.assertFalse(clientDto.isAdmin());
             Assertions.assertEquals(clientDto.getName(), clientOut.getName());
             Assertions.assertEquals(clientDto.getUsername(), clientOut.getUsername());
-            Assertions.assertEquals(clientDto.getPassword(), clientOut.getPassword());
             Assertions.assertEquals(clientDto.getPasswordSalt(), clientOut.getPasswordSalt());
             Assertions.assertEquals(clientDto.getEmail(), clientOut.getEmail());
         } catch (Exception e) {
@@ -94,41 +69,12 @@ class ClientServiceTest {
     }
 
     @Test
-    @DisplayName("Create client with empty username")
-    void createClientEmptyUsername() {
-        when(clientRepository.findByEmail(clientIn.getEmail())).thenReturn(Optional.empty());
-        when(clientRepository.findByUsername(clientIn.getUsername())).thenReturn(Optional.empty());
-
-        try {
-            clientIn.setUsername("");
-            clientService.create(clientIn.toDto());
-        } catch (Exception e) {
-            Assertions.assertEquals(e.getMessage(), "Empty username");
-        }
-    }
-
-    @Test
-    @DisplayName("Create client with empty name")
-    void createClientEmptyName() {
-        when(clientRepository.findByEmail(clientIn.getEmail())).thenReturn(Optional.empty());
-        when(clientRepository.findByUsername(clientIn.getUsername())).thenReturn(Optional.empty());
-
-        try {
-            clientIn.setName("");
-            clientService.create(clientIn.toDto());
-        } catch (Exception e) {
-            Assertions.assertEquals(e.getMessage(), "Empty name");
-        }
-    }
-
-    @Test
     @DisplayName("Create existent and active client")
     void createExistingAndActiveClient() {
-        when(clientRepository.findByEmail(clientIn.getEmail())).thenReturn(Optional.of(clientOut));
-        when(clientRepository.findByUsername(clientIn.getUsername())).thenReturn(Optional.of(clientOut));
-
         try {
             clientIn.setActive(true);
+            clientIn.setAdmin(false);
+            clientRepository.save(clientIn);
             clientService.create(clientIn.toDto());
         } catch (Exception e) {
             Assertions.assertEquals(e.getMessage(), "Client already exists");
@@ -136,30 +82,54 @@ class ClientServiceTest {
     }
 
     @Test
+    @DisplayName("Create client with empty username")
+    void createClientEmptyUsername() {
+        try {
+            clientIn.setUsername("");
+            clientService.create(clientIn.toDto());
+        } catch (Exception e) {
+            Assertions.assertEquals(e.getMessage(), "Empty username");
+        } finally {
+            clientIn.setUsername("test");
+        }
+    }
+
+    @Test
+    @DisplayName("Create client with empty name")
+    void createClientEmptyName() {
+        try {
+            clientIn.setName("");
+            clientService.create(clientIn.toDto());
+        } catch (Exception e) {
+            Assertions.assertEquals(e.getMessage(), "Empty name");
+        } finally {
+            clientIn.setName("Test");
+        }
+    }
+
+    @Test
     @DisplayName("Create client with wrong password format")
     void createClientWithWrongPasswordFormat() {
-        when(clientRepository.findByEmail(clientIn.getEmail())).thenReturn(Optional.empty());
-        when(clientRepository.findByUsername(clientIn.getUsername())).thenReturn(Optional.empty());
-
         try {
             clientIn.setPassword("aGVsbG93b3JsZA=="); // helloworld
             clientService.create(clientIn.toDto());
         } catch (Exception e) {
             Assertions.assertEquals(e.getMessage(), "User password format is not valid");
+        } finally {
+            clientIn.setPassword("Sm9zZTEyMzRAcmU1JSY="); // Jose1234 + Salt(@re5%&)
         }
     }
 
     @Test
     @DisplayName("Create client with wrong email format")
     void createClientWithWrongEmailFormat() {
-        when(clientRepository.findByEmail(clientIn.getEmail())).thenReturn(Optional.empty());
-        when(clientRepository.findByUsername(clientIn.getUsername())).thenReturn(Optional.empty());
-
         try {
             clientIn.setEmail("jose.com");
             clientService.create(clientIn.toDto());
         } catch (Exception e) {
             Assertions.assertEquals(e.getMessage(), "User email format is not valid");
+        } finally {
+            clientIn.setEmail("test@mail.com");
         }
     }
 
@@ -176,16 +146,15 @@ class ClientServiceTest {
     @Test
     @DisplayName("Find client by email")
     void findByEmailOk() {
-        when(clientRepository.findByEmail(clientIn.getEmail())).thenReturn(Optional.ofNullable(clientOut));
-
         try {
+            clientIn.setActive(true);
+            clientRepository.save(clientIn);
             ClientDto clientDto = clientService.findByEmail(clientIn.getEmail()).orElse(null);
             Assertions.assertNotNull(clientDto);
-            Assertions.assertEquals(clientDto.getId(), 1);
             Assertions.assertTrue(clientDto.isActive());
+            Assertions.assertFalse(clientDto.isAdmin());
             Assertions.assertEquals(clientDto.getName(), clientOut.getName());
             Assertions.assertEquals(clientDto.getUsername(), clientOut.getUsername());
-            Assertions.assertEquals(clientDto.getPassword(), clientOut.getPassword());
             Assertions.assertEquals(clientDto.getPasswordSalt(), clientOut.getPasswordSalt());
             Assertions.assertEquals(clientDto.getEmail(), clientOut.getEmail());
         } catch (Exception e) {
@@ -196,10 +165,10 @@ class ClientServiceTest {
     @Test
     @DisplayName("Find client by non existent email")
     void findByEmailNonExistentClient() {
-        when(clientRepository.findByEmail(clientIn.getEmail())).thenReturn(Optional.empty());
-
         try {
-            ClientDto clientDto = clientService.findByEmail(clientIn.getEmail()).orElse(null);
+            clientIn.setActive(true);
+            clientRepository.save(clientIn);
+            ClientDto clientDto = clientService.findByEmail("").orElse(null);
             Assertions.assertNull(clientDto);
         } catch (Exception e) {
             e.printStackTrace();
@@ -209,9 +178,9 @@ class ClientServiceTest {
     @Test
     @DisplayName("Find client by null email")
     void findByNullEmail() {
-        when(clientRepository.findByEmail(null)).thenReturn(Optional.empty());
-
         try {
+            clientIn.setActive(true);
+            clientRepository.save(clientIn);
             ClientDto clientDto = clientService.findByEmail(null).orElse(null);
             Assertions.assertNull(clientDto);
         } catch (Exception e) {
@@ -222,16 +191,15 @@ class ClientServiceTest {
     @Test
     @DisplayName("Find client by username")
     void findByUsernameOk() {
-        when(clientRepository.findByUsername(clientIn.getUsername())).thenReturn(Optional.ofNullable(clientOut));
-
         try {
+            clientIn.setActive(true);
+            clientRepository.save(clientIn);
             ClientDto clientDto = clientService.findByUsername(clientIn.getUsername()).orElse(null);
             Assertions.assertNotNull(clientDto);
-            Assertions.assertEquals(clientDto.getId(), 1);
             Assertions.assertTrue(clientDto.isActive());
+            Assertions.assertFalse(clientDto.isAdmin());
             Assertions.assertEquals(clientDto.getName(), clientOut.getName());
             Assertions.assertEquals(clientDto.getUsername(), clientOut.getUsername());
-            Assertions.assertEquals(clientDto.getPassword(), clientOut.getPassword());
             Assertions.assertEquals(clientDto.getPasswordSalt(), clientOut.getPasswordSalt());
             Assertions.assertEquals(clientDto.getEmail(), clientOut.getEmail());
         } catch (Exception e) {
@@ -242,10 +210,9 @@ class ClientServiceTest {
     @Test
     @DisplayName("Find client by non existent username")
     void findByUsernameNonExistentClient() {
-        when(clientRepository.findByUsername(clientIn.getUsername())).thenReturn(Optional.empty());
-
         try {
-            ClientDto clientDto = clientService.findByUsername(clientIn.getUsername()).orElse(null);
+            clientRepository.save(clientIn);
+            ClientDto clientDto = clientService.findByUsername("").orElse(null);
             Assertions.assertNull(clientDto);
         } catch (Exception e) {
             e.printStackTrace();
@@ -255,14 +222,34 @@ class ClientServiceTest {
     @Test
     @DisplayName("Find client by null username")
     void findByNullUsername() {
-        when(clientRepository.findByUsername(null)).thenReturn(Optional.empty());
-
         try {
+            clientRepository.save(clientIn);
             ClientDto clientDto = clientService.findByUsername(null).orElse(null);
             Assertions.assertNull(clientDto);
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private static ClientModel getClientIn() {
+        ClientModel clientIn = new ClientModel();
+        clientIn.setName("Test");
+        clientIn.setUsername("test");
+        clientIn.setPassword("Sm9zZTEyMzRAcmU1JSY="); // Jose1234 + Salt(@re5%&)
+        clientIn.setPasswordSalt("QHJlNSUm"); // @re5%&
+        clientIn.setEmail("test@mail.com");
+        return clientIn;
+    }
+
+    private static ClientModel getClientOut() {
+        ClientModel clientOut = new ClientModel();
+        clientOut.setActive(true);
+        clientOut.setName("Test");
+        clientOut.setUsername("test");
+        clientOut.setPasswordSalt("QHJlNSUm"); // @re5%&
+        clientOut.setEmail("test@mail.com");
+        clientOut.setAdmin(false);
+        return clientOut;
     }
 
 }
