@@ -21,6 +21,7 @@ public class ClientRepositoryTest {
             return;
         }
 
+        clientRepository.deleteAll();
         clientIn = getClientIn();
         clientRepository.save(clientIn);
         setUpIsDone = true;
