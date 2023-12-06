@@ -19,7 +19,7 @@ public class NoteController {
     private NoteService noteService;
 
     @PostMapping("/note")
-    public ResponseEntity<?> register(@RequestBody NoteDto noteDto) {
+    public ResponseEntity<?> addNote(@RequestBody NoteDto noteDto) {
         try {
             Optional<NoteDto> newNoteDtoOptional = noteService.createNote(noteDto);
             if (!newNoteDtoOptional.isPresent()) {
