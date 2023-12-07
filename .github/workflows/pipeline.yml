@@ -52,6 +52,12 @@ jobs:
       - name: Execute Tests
         run: mvn -B clean test
 
+      - name: Sonar analyzing
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=jprieto96_myspace-api
+
   push-docker-image:
     name: Push Production Docker Image to Docker Hub
     if: ${{ github.event_name == 'push' && github.ref_name == 'main' }}

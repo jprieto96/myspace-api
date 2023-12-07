@@ -15,6 +15,11 @@
 	<description>Project built to manage your tasks</description>
 	<properties>
 		<java.version>17</java.version>
+		<!-- SonarCloud -->
+		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
+		<sonar.organization>jprieto96</sonar.organization>
+		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 	</properties>
 	<dependencies>
 		<!-- Spring Boot Starter JPA -->
@@ -170,9 +175,24 @@
 				</configuration>
 			</plugin>
 			<plugin>
-				<groupId>org.sonarsource.scanner.maven</groupId>
-				<artifactId>sonar-maven-plugin</artifactId>
-				<version>3.7.0.1746</version>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.8.5</version>
+				<executions>
+					<execution>
+						<id>prepare-agent</id>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>report</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
