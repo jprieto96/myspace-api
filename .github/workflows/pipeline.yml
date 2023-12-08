@@ -52,19 +52,11 @@ jobs:
       - name: Execute Tests
         run: mvn -B clean test
 
-      - if: ${{ github.ref_name == 'main' }}
-        name: Sonar analyzing
+      - name: Sonar analyzing
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN -Dsonar.branch.name=main
-
-      - if: ${{ github.ref_name == 'develop' }}
-        name: Sonar analyzing
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN -Dsonar.branch.name=develop
+        run: mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN -Dsonar.branch.name=$github.ref_name
 
   push-docker-image:
     name: Push Production Docker Image to Docker Hub
