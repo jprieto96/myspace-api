@@ -52,6 +52,13 @@ jobs:
       - name: Execute Tests
         run: mvn -B clean test
 
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+
       - name: Sonar analyzing
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
