@@ -29,10 +29,6 @@ public class NoteModel implements Serializable {
     @OneToMany(mappedBy = "noteModel", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<NoteTopicModel> noteTopicModels;
 
-    public NoteModel() {
-
-    }
-
     public NoteDto toDto() {
         return new NoteDto(this);
     }

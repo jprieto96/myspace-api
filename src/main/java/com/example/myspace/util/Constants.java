@@ -2,6 +2,8 @@ package com.example.myspace.util;
 
 public class Constants {
 
+    private Constants() {}
+
     // Authorization key in the Header
     public static final String HEADER_AUTHORIZATION_KEY  = "Authorization";
 

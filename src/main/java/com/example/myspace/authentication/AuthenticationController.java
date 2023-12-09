@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Date;
 import java.util.Optional;
@@ -34,15 +35,15 @@ public class AuthenticationController {
     private ClientService clientService;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody AuthenticationDto authenticationDto) throws AuthenticationException {
+    public ResponseEntity<TokenResultUtil> login(@RequestBody AuthenticationDto authenticationDto) throws AuthenticationException {
 
         Optional<ClientDto> optionalClientDto = clientService.findByUsername(authenticationDto.getUsername());
         String finalEncryptedPassword = authenticationDto.getPassword();
         if(optionalClientDto.isPresent()) {
-            String decryptedPassword = new String(Base64.getDecoder().decode(authenticationDto.getPassword()));
-            String decryptedPasswordSalt = new String(Base64.getDecoder().decode(optionalClientDto.get().getPasswordSalt()));
+            String decryptedPassword = Arrays.toString(Base64.getDecoder().decode(authenticationDto.getPassword()));
+            String decryptedPasswordSalt = Arrays.toString(Base64.getDecoder().decode(optionalClientDto.get().getPasswordSalt()));
             String finalPassword = decryptedPassword + decryptedPasswordSalt;
-            finalEncryptedPassword = new String(Base64.getEncoder().encode(finalPassword.getBytes()));
+            finalEncryptedPassword = Arrays.toString(Base64.getEncoder().encode(finalPassword.getBytes()));
         }
 
         // Authentication is realized with the username and password

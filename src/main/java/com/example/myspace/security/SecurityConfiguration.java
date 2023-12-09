@@ -20,12 +20,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfiguration {
 
-    // Serves to return 401 response when you can not login
-    @Autowired
-    private JWTAuthenticationEntryPoint unauthorizedHandler;
-
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, JWTAuthenticationEntryPoint unauthorizedHandler) throws Exception {
         http
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
             .cors().and()
@@ -42,7 +38,7 @@ public class SecurityConfiguration {
 
     // Bean for our JWTAuthenticationFilter
     @Bean
-    public JWTAuthenticationFilter authenticationTokenFilterBean() throws Exception {
+    public JWTAuthenticationFilter authenticationTokenFilterBean() {
         return new JWTAuthenticationFilter();
     }
 

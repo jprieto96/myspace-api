@@ -18,7 +18,6 @@ import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -124,12 +123,8 @@ public class NoteServiceImpl implements NoteService {
         Long clientId = optionalClientModel.get().getId();
         log.debug("Notes for client {} has passed validation rules", clientId);
         List<NoteModel> noteModelList = noteRepository.findAllByClientId(clientId);
-        List<NoteDto> noteDtoList = noteModelList.stream().map(
-                noteModel -> noteModel.toDto()).collect(Collectors.toList()
-        );
 
-
-        return noteDtoList;
+        return noteModelList.stream().map(NoteModel::toDto).toList();
     }
 
     private String getLoggedUser() {

@@ -39,10 +39,10 @@ public class ClientServiceTest {
             Assertions.assertNotNull(clientDto);
             Assertions.assertTrue(clientDto.isActive());
             Assertions.assertFalse(clientDto.isAdmin());
-            Assertions.assertEquals(clientDto.getName(), clientOut.getName());
-            Assertions.assertEquals(clientDto.getUsername(), clientOut.getUsername());
-            Assertions.assertEquals(clientDto.getPasswordSalt(), clientOut.getPasswordSalt());
-            Assertions.assertEquals(clientDto.getEmail(), clientOut.getEmail());
+            Assertions.assertEquals(clientOut.getName(), clientDto.getName());
+            Assertions.assertEquals(clientOut.getUsername(), clientDto.getUsername());
+            Assertions.assertEquals(clientOut.getPasswordSalt(), clientDto.getPasswordSalt());
+            Assertions.assertEquals(clientOut.getEmail(), clientDto.getEmail());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -59,10 +59,10 @@ public class ClientServiceTest {
             Assertions.assertNotNull(clientDto);
             Assertions.assertTrue(clientDto.isActive());
             Assertions.assertFalse(clientDto.isAdmin());
-            Assertions.assertEquals(clientDto.getName(), clientOut.getName());
-            Assertions.assertEquals(clientDto.getUsername(), clientOut.getUsername());
-            Assertions.assertEquals(clientDto.getPasswordSalt(), clientOut.getPasswordSalt());
-            Assertions.assertEquals(clientDto.getEmail(), clientOut.getEmail());
+            Assertions.assertEquals(clientOut.getName(), clientDto.getName());
+            Assertions.assertEquals(clientOut.getUsername(), clientDto.getUsername());
+            Assertions.assertEquals(clientOut.getPasswordSalt(), clientDto.getPasswordSalt());
+            Assertions.assertEquals(clientOut.getEmail(), clientDto.getEmail());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -77,7 +77,7 @@ public class ClientServiceTest {
             clientRepository.save(clientIn);
             clientService.create(clientIn.toDto());
         } catch (Exception e) {
-            Assertions.assertEquals(e.getMessage(), "Client already exists");
+            Assertions.assertEquals("Client already exists", e.getMessage());
         }
     }
 
@@ -88,7 +88,7 @@ public class ClientServiceTest {
             clientIn.setUsername("");
             clientService.create(clientIn.toDto());
         } catch (Exception e) {
-            Assertions.assertEquals(e.getMessage(), "Empty username");
+            Assertions.assertEquals("Empty username", e.getMessage());
         } finally {
             clientIn.setUsername("test");
         }
@@ -101,7 +101,7 @@ public class ClientServiceTest {
             clientIn.setName("");
             clientService.create(clientIn.toDto());
         } catch (Exception e) {
-            Assertions.assertEquals(e.getMessage(), "Empty name");
+            Assertions.assertEquals("Empty name", e.getMessage());
         } finally {
             clientIn.setName("Test");
         }
@@ -114,7 +114,7 @@ public class ClientServiceTest {
             clientIn.setPassword("aGVsbG93b3JsZA=="); // helloworld
             clientService.create(clientIn.toDto());
         } catch (Exception e) {
-            Assertions.assertEquals(e.getMessage(), "User password format is not valid");
+            Assertions.assertEquals("User password format is not valid", e.getMessage());
         } finally {
             clientIn.setPassword("Sm9zZTEyMzRAcmU1JSY="); // Jose1234 + Salt(@re5%&)
         }
@@ -127,7 +127,7 @@ public class ClientServiceTest {
             clientIn.setEmail("jose.com");
             clientService.create(clientIn.toDto());
         } catch (Exception e) {
-            Assertions.assertEquals(e.getMessage(), "User email format is not valid");
+            Assertions.assertEquals("User email format is not valid", e.getMessage());
         } finally {
             clientIn.setEmail("test@mail.com");
         }
@@ -139,7 +139,7 @@ public class ClientServiceTest {
         try {
             clientService.create(null);
         } catch (Exception e) {
-            Assertions.assertEquals(e.getMessage(), "Null client provided");
+            Assertions.assertEquals("Null client provided", e.getMessage());
         }
     }
 
@@ -153,10 +153,10 @@ public class ClientServiceTest {
             Assertions.assertNotNull(clientDto);
             Assertions.assertTrue(clientDto.isActive());
             Assertions.assertFalse(clientDto.isAdmin());
-            Assertions.assertEquals(clientDto.getName(), clientOut.getName());
-            Assertions.assertEquals(clientDto.getUsername(), clientOut.getUsername());
-            Assertions.assertEquals(clientDto.getPasswordSalt(), clientOut.getPasswordSalt());
-            Assertions.assertEquals(clientDto.getEmail(), clientOut.getEmail());
+            Assertions.assertEquals(clientOut.getName(), clientDto.getName());
+            Assertions.assertEquals(clientOut.getUsername(), clientDto.getUsername());
+            Assertions.assertEquals(clientOut.getPasswordSalt(), clientDto.getPasswordSalt());
+            Assertions.assertEquals(clientOut.getEmail(), clientDto.getEmail());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -198,10 +198,10 @@ public class ClientServiceTest {
             Assertions.assertNotNull(clientDto);
             Assertions.assertTrue(clientDto.isActive());
             Assertions.assertFalse(clientDto.isAdmin());
-            Assertions.assertEquals(clientDto.getName(), clientOut.getName());
-            Assertions.assertEquals(clientDto.getUsername(), clientOut.getUsername());
-            Assertions.assertEquals(clientDto.getPasswordSalt(), clientOut.getPasswordSalt());
-            Assertions.assertEquals(clientDto.getEmail(), clientOut.getEmail());
+            Assertions.assertEquals(clientOut.getName(), clientDto.getName());
+            Assertions.assertEquals(clientOut.getUsername(), clientDto.getUsername());
+            Assertions.assertEquals(clientOut.getPasswordSalt(), clientDto.getPasswordSalt());
+            Assertions.assertEquals(clientOut.getEmail(), clientDto.getEmail());
         } catch (Exception e) {
             e.printStackTrace();
         }

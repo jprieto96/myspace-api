@@ -53,7 +53,12 @@ public class ClientDto {
 
     @JsonIgnore
     public String getEncodedPasswordSalt() {
-        return new String(Base64.getEncoder().encode(getSalt().getBytes()));
+        String salt = getSalt();
+        if (salt == null) {
+            return null;
+        }
+
+        return new String(Base64.getEncoder().encode(salt.getBytes()));
     }
 
     private String getSalt() {

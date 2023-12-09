@@ -19,7 +19,7 @@ public class NoteController {
     private NoteService noteService;
 
     @PostMapping("/note")
-    public ResponseEntity<?> addNote(@RequestBody NoteDto noteDto) {
+    public ResponseEntity<NoteDto> addNote(@RequestBody NoteDto noteDto) {
         try {
             Optional<NoteDto> newNoteDtoOptional = noteService.createNote(noteDto);
             if (!newNoteDtoOptional.isPresent()) {
@@ -44,7 +44,7 @@ public class NoteController {
     }
 
     @GetMapping(path = "/note/delete/{id}")
-    public ResponseEntity<?> deleteNoteById(@PathVariable("id") String id) {
+    public ResponseEntity<String> deleteNoteById(@PathVariable("id") String id) {
         try {
             noteService.deleteNote(Long.parseLong(id));
         } catch (NoteException e) {

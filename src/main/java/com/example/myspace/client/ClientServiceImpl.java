@@ -79,7 +79,7 @@ public class ClientServiceImpl implements UserDetailsService, ClientService {
 
     private boolean isEmailValid(String email) {
         if(email == null) return false;
-        String pattern = "^[\\p{L}0-9!#$%&'*+\\/=?^_`{|}~-][\\p{L}0-9.!#$%&'*+\\/=?^_`{|}~-]{0,63}@[\\p{L}0-9-]+(?:\\.[\\p{L}0-9-]{2,7})*$";
+        String pattern = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$";
         return Pattern.matches(pattern, email);
     }
 
