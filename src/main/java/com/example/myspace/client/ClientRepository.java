@@ -1,6 +1,5 @@
 package com.example.myspace.client;
 
-import com.example.myspace.client.ClientModel;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 

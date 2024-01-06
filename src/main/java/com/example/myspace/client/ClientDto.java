@@ -28,6 +28,14 @@ public class ClientDto {
     public ClientDto() {
     }
 
+    public ClientDto(String name, String username, String password, String passwordSalt, String email) {
+        this.name = name;
+        this.username = username;
+        this.password = password;
+        this.passwordSalt = passwordSalt;
+        this.email = email;
+    }
+
     public ClientDto(ClientModel clientModel) {
         this.id = clientModel.getId();
         this.name = clientModel.getName();
@@ -45,7 +53,12 @@ public class ClientDto {
 
     @JsonIgnore
     public String getEncodedPasswordSalt() {
-        return new String(Base64.getEncoder().encode(getSalt().getBytes()));
+        String salt = getSalt();
+        if (salt == null) {
+            return null;
+        }
+
+        return new String(Base64.getEncoder().encode(salt.getBytes()));
     }
 
     private String getSalt() {

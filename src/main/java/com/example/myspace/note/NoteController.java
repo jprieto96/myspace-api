@@ -19,7 +19,7 @@ public class NoteController {
     private NoteService noteService;
 
     @PostMapping("/note")
-    public ResponseEntity<?> register(@RequestBody NoteDto noteDto) {
+    public ResponseEntity<NoteDto> addNote(@RequestBody NoteDto noteDto) {
         try {
             Optional<NoteDto> newNoteDtoOptional = noteService.createNote(noteDto);
             if (!newNoteDtoOptional.isPresent()) {
@@ -43,14 +43,14 @@ public class NoteController {
         return ResponseEntity.status(HttpStatus.OK).body(noteList);
     }
 
-    @GetMapping(path = "/note/{id}")
-    public ResponseEntity<NoteDto> noteById(@PathVariable("id") String id) throws NoteException {
-        NoteDto notedto = noteService.showDetails(Long.parseLong(id));
-        if(notedto == null) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST);
+    @GetMapping(path = "/note/delete/{id}")
+    public ResponseEntity<String> deleteNoteById(@PathVariable("id") String id) {
+        try {
+            noteService.deleteNote(Long.parseLong(id));
+        } catch (NoteException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
-        return ResponseEntity.status(HttpStatus.OK).body(notedto);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("");
     }
 
 }

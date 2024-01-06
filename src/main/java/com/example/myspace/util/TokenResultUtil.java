@@ -20,12 +20,6 @@ public class TokenResultUtil {
         this.tokenResult = tokenType.concat(" ").concat(token);
     }
 
-    public TokenResultUtil(String token, boolean isFirstLogin){
-
-        this.token = token;
-        this.tokenResult = tokenType.concat(" ").concat(token);
-    }
-
     public String getToken() {
         return token;
     }

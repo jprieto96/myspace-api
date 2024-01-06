@@ -18,7 +18,7 @@ public class ClientController {
     private ClientService clientService;
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody ClientDto clientDto) {
+    public ResponseEntity<ClientDto> register(@RequestBody ClientDto clientDto) {
         try {
             Optional<ClientDto> newClientDtoOptional = clientService.create(clientDto);
             if (!newClientDtoOptional.isPresent()) {
