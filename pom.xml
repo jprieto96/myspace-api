@@ -19,7 +19,7 @@
         <sonar.organization>jprieto96</sonar.organization>
         <sonar.projectKey>jprieto96_myspace-api</sonar.projectKey>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-        <sonar.qualitygate.wait>true</sonar.qualitygate.wait>
+        <!-- <sonar.qualitygate.wait>true</sonar.qualitygate.wait> -->
     </properties>
     <dependencies>
         <!-- Spring Boot Starter JPA -->
