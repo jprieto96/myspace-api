@@ -1,4 +1,4 @@
-# myspace-api CI/CD pipeline
+# myspace CI/CD pipeline
 name: CI/CD Pipeline
 
 on:
